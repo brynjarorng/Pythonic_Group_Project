@@ -27,7 +27,6 @@ snakeTail = []
 moveSpeed = 1
 moveX = 1
 moveY = 0
-direction = 'x'
 
 # init apple
 appleColor = (255,0,0)
@@ -79,12 +78,28 @@ def drawGame():
     x += moveX*SCALE
     y += moveY*SCALE
     
+    detectEdge()
+
     pg.display.update()
+
 def detectApple():
     if appleX - snakeSize/2 <= y and y <= appleX + snakeSize/2 and appleY - snakeSize/2 <= x and x <= appleY + snakeSize/2:
         global snakeTail
         snakeTail.append((x,y))
         placeApple()
+
+def detectEdge():
+    global x
+    global y
+    global moveX
+    global moveY
+    global snakeTail
+    if x <= 0 or x >= width or y <= 0 or y >= height:
+        snakeTail = []
+        x = int(width / 2)
+        y = int(height / 2)
+        moveX = 1
+        moveY = 0
 
 # Initial apple
 placeApple()
