@@ -19,7 +19,7 @@ SCALE = 10
 # init snake
 x = int(width / 2)
 y = int(height / 2)
-snakeSize = 20
+unitSize = 20
 snakeColor = (0,255,0)
 snakeTail = []
 
@@ -52,7 +52,6 @@ def placeApple():
     appleY = random.randint(1, row - SCALE) * SCALE
     # Debug info
     logging.info('\nappleX: ' + str(appleX) + '\nappleY: ' + str(appleY))
-
 def drawGame():
     global x
     global y
@@ -62,14 +61,14 @@ def drawGame():
     screen.blit(background, (0,0))
 
     # apple
-    pg.draw.rect(screen, appleColor, (appleY,appleX,snakeSize,snakeSize))
+    pg.draw.rect(screen, appleColor, (appleY,appleX,unitSize,unitSize))
     # snake
-    pg.draw.rect(screen, snakeColor, (x,y,snakeSize,snakeSize))
+    pg.draw.rect(screen, snakeColor, (x,y,unitSize,unitSize))
     # tail
     
     for ind in range(len(snakeTail)):
         #print(snakeTail[ind][0], snakeTail[ind][1])
-        pg.draw.rect(screen, snakeColor, (snakeTail[ind][0], snakeTail[ind][1], snakeSize, snakeSize))
+        pg.draw.rect(screen, snakeColor, (snakeTail[ind][0], snakeTail[ind][1], unitSize, unitSize))
     # move the snake
     if len(snakeTail) >= 1:
         snakeTail[0] = (x, y)
@@ -79,27 +78,34 @@ def drawGame():
     y += moveY*SCALE
     
     detectEdge()
-
+    detectCollision()
     pg.display.update()
-
 def detectApple():
-    if appleX - snakeSize/2 <= y and y <= appleX + snakeSize/2 and appleY - snakeSize/2 <= x and x <= appleY + snakeSize/2:
+    if appleX - unitSize/2 <= y and y <= appleX + unitSize/2 and appleY - unitSize/2 <= x and x <= appleY + unitSize/2:
         global snakeTail
         snakeTail.append((x,y))
         placeApple()
-
 def detectEdge():
+    if x <= 0 or x >= width or y <= 0 or y >= height:
+        resetGame()
+def detectCollision():
+    global x
+    global y
+    if (x, y) in snakeTail:
+        resetGame()
+def resetGame():
     global x
     global y
     global moveX
     global moveY
     global snakeTail
-    if x <= 0 or x >= width or y <= 0 or y >= height:
-        snakeTail = []
-        x = int(width / 2)
-        y = int(height / 2)
-        moveX = 1
-        moveY = 0
+    snakeTail = []
+    x = int(width / 2)
+    y = int(height / 2)
+    moveX = 1
+    moveY = 0
+
+
 
 # Initial apple
 placeApple()
