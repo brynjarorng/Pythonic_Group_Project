@@ -1,14 +1,11 @@
 import pygame as pg
 import random
 from pathlib import Path
-import logging
 import math
 
 pg.mixer.pre_init(44100, 16, 2, 4096)
 pg.init()
 pg.mixer.init()
-
-logging.basicConfig(filename='apple_pos.log', level=logging.INFO)
 
 # load audio
 p = Path('./')
@@ -250,7 +247,7 @@ def drawMenu(keyinput):
     screen.blit(quitTextSurf, quitText)
     pg.display.update()
 
-# MOVE TO SEPERATE FILE
+# MOVE TO SEPERATE FILE?
 def text_objects(text, font):
     textSurface = font.render(text, True, (255,255,255))
     return textSurface, textSurface.get_rect() 
