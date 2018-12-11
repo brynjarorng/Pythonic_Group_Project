@@ -1,11 +1,21 @@
 import pygame as pg
 import random
+from pathlib import Path
 import logging
 import math
 
+pg.mixer.pre_init(44100, 16, 2, 4096)
 pg.init()
+pg.mixer.init()
 
 logging.basicConfig(filename='apple_pos.log', level=logging.INFO)
+
+# load audio
+p = Path('./')
+p = p / 'snake'
+p = p / 'crunch.wav'
+print(p.absolute())
+eatSound = pg.mixer.Sound(str(p.absolute()))
 
 # run variable
 run = True
@@ -116,6 +126,7 @@ def drawGame():
 def detectApple():
     if appleX - unitSize/2 <= y and y <= appleX + unitSize/2 and appleY - unitSize/2 <= x and x <= appleY + unitSize/2:
         global snakeTail
+        eatSound.play()
         snakeTail.append((x, y))
         placeApple()
 def detectEdge():
