@@ -38,7 +38,7 @@ def buildBoard():
             # food
             elif c == 'O':
                 #obj = pg.draw.circle(screen, )
-                pg.draw.rect(screen, (255, 255, 0), (x * squares, y * squares, squares/3, squares/3))
+                pg.draw.circle(screen, (255, 255, 0), (int(x * squares + squares / 2), int(y * squares + squares / 2)), int(squares/10) )
             # ghost spawn
             elif c == 'S':
                 pg.draw.rect(screen, (0, 0, 0), (x * squares, y * squares, squares, squares))

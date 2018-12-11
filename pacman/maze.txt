@@ -12,7 +12,7 @@
 ||||||O||NNNN||NNNN||O||||||
 ||||||O||NNNNNNNNNN||O||||||
 ||||||O||N|||NN|||N||O||||||
-|NNNNNONNN|SSSSSS|NNNONNNNN|
+NNNNNNONNN|SSSSSS|NNNONNNNNN
 ||||||O||N|SSSSSS|N||O||||||
 ||||||O||N||||||||N||O||||||
 ||||||O||NNNNNNNNNN||O||||||
