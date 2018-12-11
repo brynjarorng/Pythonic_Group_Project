@@ -1,79 +1,78 @@
 import pygame as pg
 
-pg.init()
+FPS = 200
 
-# load maze into memory
-maze = [0] * 31
-with open('maze.txt') as f:
-    for i,l in enumerate(f):
-        tmp = []
-        for c in l:
-            tmp.append(c)
-        maze[i] = tmp[:-1]
+# The board
+MAZE = [0] * 31
 
-
-# game board init
+# Gameboard attributes
 SCALE = 2
-squares = 10 * SCALE
-width = 28 * squares
-height = 31 * squares
-screen = pg.display.set_mode((width, height))
+TILE = 10 * SCALE
+WINDOWWIDTH = 28 * TILE
+WINDOWHEIGHT = 31 * TILE
 
+# Object attributes
+COINRAD = int(TILE/10)
+BIGCOINRAD = COINRAD*3
+
+# Sprite attributes
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0,0,0)
+YELLOW = (255, 255, 0)
+BLUE = (0, 25, 175)
+
+def readBoard():
+    with open('whackman/maze.txt') as f:
+        for i, l in enumerate(f):
+            MAZE[i] = []
+            for c in l.strip():
+                MAZE[i].append(c)
 
 def buildBoard():
-    global screen
-
-    # set background color
-    backgroundColor = (0, 0, 0)
-    background = pg.Surface(screen.get_size())
-    background.fill(backgroundColor)
-    # colors
-
-
-    for y,l in enumerate(maze):
-        for x,c in enumerate(l):
-            # walls
+    
+    for y, l in enumerate(MAZE):
+        for x, c in enumerate(l):
+            # Walls
             if c == '|':
-                pg.draw.rect(screen, (0, 0, 255), (x * squares, y * squares, squares, squares))
-            # food
+                pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE, TILE), 5)
+            # Coin
             elif c == 'O':
-                #obj = pg.draw.circle(screen, )
-                pg.draw.circle(screen, (255, 255, 0), (int(x * squares + squares / 2), int(y * squares + squares / 2)), int(squares/10) )
-            # ghost spawn
+                pg.draw.circle(SCREEN, YELLOW, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRAD)
+            # Ghost spawn
             elif c == 'S':
-                pg.draw.rect(screen, (0, 0, 0), (x * squares, y * squares, squares, squares))
-            # nothing
+                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE, TILE))
+            # Empty tile
             elif c == 'N':
-                pg.draw.rect(screen, (255, 255, 255), (x * squares, y * squares, squares, squares))
-            # super food
+                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE, TILE))
+            # Super food
             elif c == 'Q':
-                pg.draw.rect(screen, (255, 255, 0), (x * squares, y * squares, squares/2, squares/2))
-    pg.display.flip()
+                pg.draw.circle(SCREEN, YELLOW, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRAD)
 
-clock = pg.time.Clock()
-while 1:
-    clock.tick(30)
-    pg.event.pump()
-    keyinput = pg.key.get_pressed()
+def main():
+    pg.init()
+    global SCREEN
+    
+    FPSCLOCK = pg.time.Clock()
+    SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
-    if keyinput[pg.K_ESCAPE]:
-        pg.quit()
-        quit()
-
+    readBoard()
     buildBoard()
 
 
+    while 1:
+        pg.event.pump()
+        keyinput = pg.key.get_pressed()
+
+        if keyinput[pg.K_ESCAPE]:
+            quit()
+            sys.exit()
 
 
+        pg.display.update()
+    FPSCLOCK.tick(FPS)
 
 
-
-
-
-
-'''
-for l in maze:
-    for c in l:
-        print(c, end='')
-    print()
-'''
+if __name__ == '__main__':
+    main()
