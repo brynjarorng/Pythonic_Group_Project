@@ -63,9 +63,6 @@ def play():
     startMain = True
     while startMain:
         keyinput = pg.key.get_pressed()
-        if keyinput[pg.K_SPACE]:
-            resetGame()
-            startMain = start()
 
         # bar for the text
         largeText = pg.font.Font('freesansbold.ttf', 80)
@@ -77,12 +74,16 @@ def play():
         # menu text elements
         startSurf, startText = text_objects("press space to start", largeText)
         startText.center = ((height/2),(width/2))
-
+        
         # add elements to drawing surface
         screen.blit(startSurf, startText)
         pg.display.flip()
         pg.event.pump()
         clock.tick(30)
+
+        if keyinput[pg.K_SPACE]:
+            resetGame()
+            startMain = start()
 
 def placeApple():
     global appleX
@@ -93,6 +94,7 @@ def placeApple():
     appleY = random.randint(1, row - SCALE) * SCALE
     # Debug info
     logging.info('\nappleX: ' + str(appleX) + '\nappleY: ' + str(appleY))
+
 def drawGame():
     global x
     global y
@@ -113,30 +115,39 @@ def drawGame():
         pg.draw.rect(screen, snakeColor, (snakeTail[ind][0], snakeTail[ind][1], unitSize, unitSize))
 
     # move the snake
+
+    for ind in range(len(snakeTail) - 1, 0, -1):
+        snakeTail[ind] = snakeTail[ind - 1]
+
     if len(snakeTail) >= 1:
         snakeTail[0] = (x, y)
-    for ind in range(len(snakeTail) - 1, -1, -1):
-        snakeTail[ind] = snakeTail[ind - 1]
+
     x += moveX*SCALE
     y += moveY*SCALE
+
+    print((x,y), snakeTail)
     
     detectEdge()
     detectCollision()
-    pg.display.update()
+    pg.display.flip()
+
 def detectApple():
     if appleX - unitSize/2 <= y and y <= appleX + unitSize/2 and appleY - unitSize/2 <= x and x <= appleY + unitSize/2:
         global snakeTail
         eatSound.play()
         snakeTail.append((x, y))
         placeApple()
+
 def detectEdge():
     if x <= 0 or x >= width or y <= 0 or y >= height:
         gameOver()
+
 def detectCollision():
     global x
     global y
     if (x, y) in snakeTail:
         gameOver()
+
 def resetGame():
     global x
     global y
@@ -148,6 +159,7 @@ def resetGame():
     y = int(height / 2)
     moveX = 1
     moveY = 0
+
 def gameOver():
     global run
     runLoop = True
@@ -181,6 +193,7 @@ def gameOver():
         clock.tick(30)
         pg.event.pump()
         pg.display.update()
+
 # load the game menu for snake
 def getMenu(keyinput):
     if keyinput[pg.K_ESCAPE]:
@@ -203,6 +216,7 @@ def getMenu(keyinput):
             elif keyinput[pg.K_n]:
                 x,y = tmp
                 return
+
 def movePlayer(keyinput):
     global moveX
     global moveY
@@ -219,6 +233,7 @@ def movePlayer(keyinput):
     elif keyinput[pg.K_DOWN]:
         moveY = moveSpeed
         moveX = 0
+
 def drawMenu(keyinput):
     # bar for the text
     largeText = pg.font.Font('freesansbold.ttf', 80)
