@@ -1,4 +1,5 @@
 import pygame as pg
+from whackmanPlayer import whackMan
 
 pg.init()
 
@@ -24,8 +25,8 @@ def buildBoard():
     global screen
 
     # set background color
-    backgroundColor = (0, 0, 0)
-    background = pg.Surface(screen.get_size())
+    backgroundColor = (255, 255, 255)
+    background = pg.display.set_mode((height,width))
     background.fill(backgroundColor)
     # colors
 
@@ -38,7 +39,7 @@ def buildBoard():
             # food
             elif c == 'O':
                 #obj = pg.draw.circle(screen, )
-                pg.draw.circle(screen, (255, 255, 0), (int(x * squares + squares / 2), int(y * squares + squares / 2)), int(squares/10) )
+                pg.draw.circle(screen, (255, 255, 0), (int(x * squares + squares / 2), int(y * squares + squares / 2)), int(squares/2) )
             # ghost spawn
             elif c == 'S':
                 pg.draw.rect(screen, (0, 0, 0), (x * squares, y * squares, squares, squares))
@@ -51,6 +52,8 @@ def buildBoard():
     pg.display.flip()
 
 clock = pg.time.Clock()
+z = whackMan(220, 250, 5)
+dire = 'R'
 while 1:
     clock.tick(30)
     pg.event.pump()
@@ -60,7 +63,31 @@ while 1:
         pg.quit()
         quit()
 
-    buildBoard()
+    #buildBoard()
+    #screen.blit(z.img, z.rect)
+    pg.display.flip()
+
+
+    if keyinput[pg.K_LEFT]:
+        z.moveL()
+        dire = 'L'
+    elif keyinput[pg.K_RIGHT]:
+        z.moveR()
+        dire = 'R'
+    elif keyinput[pg.K_UP]:
+        z.moveU()
+    elif keyinput[pg.K_DOWN]:
+        z.moveD()
+    
+    backgroundColor = (255, 255, 255)
+    background = pg.display.set_mode((height,width))
+    background.fill(backgroundColor)
+
+    if dire == 'L':
+        screen.blit(pg.transform.flip(z.img, True, False), z.rect)
+    elif dire == 'R':
+        screen.blit(z.img, z.rect)
+    
 
 
 
