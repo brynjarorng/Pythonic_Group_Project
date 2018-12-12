@@ -11,7 +11,6 @@ pg.mixer.init()
 p = Path('./')
 p = p / 'snake'
 p = p / 'crunch.wav'
-print(p.absolute())
 eatSound = pg.mixer.Sound(str(p.absolute()))
 
 # run variable
@@ -89,8 +88,6 @@ def placeApple():
     row = math.floor(height / SCALE)
     appleX = random.randint(1, col - SCALE) * SCALE
     appleY = random.randint(1, row - SCALE) * SCALE
-    # Debug info
-    logging.info('\nappleX: ' + str(appleX) + '\nappleY: ' + str(appleY))
 
 def drawGame():
     global x
@@ -108,7 +105,6 @@ def drawGame():
 
     # tail
     for ind in range(len(snakeTail)):
-        #print(snakeTail[ind][0], snakeTail[ind][1])
         pg.draw.rect(screen, snakeColor, (snakeTail[ind][0], snakeTail[ind][1], unitSize, unitSize))
 
     # move the snake
@@ -121,8 +117,6 @@ def drawGame():
 
     x += moveX*SCALE
     y += moveY*SCALE
-
-    print((x,y), snakeTail)
     
     detectEdge()
     detectCollision()
