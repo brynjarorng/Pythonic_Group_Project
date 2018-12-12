@@ -1,10 +1,21 @@
 import whackman as w
 
-def valDown(POS, MAZE):
-    return MAZE[POS[1] + 1][POS[0]] == 'N' or MAZE[POS[1] + 1][POS[0]] == 'O' or MAZE[POS[1] + 1][POS[0]] == 'G' or MAZE[POS[1] + 1][POS[0]] == 'Q'
-def valUp(POS, MAZE):
-    return MAZE[POS[1] - 1][POS[0]] == 'N' or MAZE[POS[1] - 1][POS[0]] == 'O' or MAZE[POS[1] - 1][POS[0]] == 'G' or MAZE[POS[1] - 1][POS[0]] == 'Q'
-def valLeft(POS, MAZE):
-    return MAZE[POS[1]][POS[0] + 1] == 'N' or MAZE[POS[1]][POS[0] + 1] == 'O' or MAZE[POS[1]][POS[0] + 1] == 'G' or MAZE[POS[1]][POS[0] + 1] == 'Q'
-def valRight(POS, MAZE):
-    return MAZE[POS[1]][POS[0] - 1] == 'N' or MAZE[POS[1]][POS[0] - 1] == 'O' or MAZE[POS[1]][POS[0] - 1] == 'G' or MAZE[POS[1]][POS[0] - 1] == 'Q'
+def validateMove(MAZE, POS, nextDir):
+    newPOS = (POS[0] + nextDir[0], POS[1] + nextDir[1])
+    return MAZE[newPOS[1]][newPOS[0]] != '|' 
+
+def makeMove(MAZE, POS, moveDir):
+    newPOS = (POS[0] + moveDir[0], POS[1] + moveDir[1])
+    if MAZE[newPOS[1]][newPOS[0]] != '|':
+        MAZE[POS[1]][POS[0]] = 'N'
+        MAZE[newPOS[1]][newPOS[0]] = 'P'
+        return newPOS
+    return POS
+
+def makeMoveGHOST(MAZE, POS, moveDir):
+    newPOS = (POS[0] + moveDir[0], POS[1] + moveDir[1])
+    if MAZE[newPOS[1]][newPOS[0]] != '|':
+        MAZE[POS[1]][POS[0]] = 'N'
+        MAZE[newPOS[1]][newPOS[0]] = 'A'
+        return newPOS
+    return POS
