@@ -12,8 +12,8 @@
 ||||||O||NNNN||NNNN||O||||||
 ||||||O||NNNNNNNNNN||O||||||
 ||||||O||N|||NN|||N||O||||||
-NNNNNNONNN|SSSSSS|NNNONNNNNN
-||||||O||N|SSSSSS|N||O||||||
+NNNNNNONNN|NNNNNN|NNNONNNNNN
+||||||O||N|GNGGNG|N||O||||||
 ||||||O||N||||||||N||O||||||
 ||||||O||NNNNNNNNNN||O||||||
 ||||||O||N||||||||N||O||||||
@@ -21,7 +21,7 @@ NNNNNNONNN|SSSSSS|NNNONNNNNN
 |OOOOOOOOOOOO||OOOOOOOOOOOO|
 |O||||O|||||O||O|||||O||||O|
 |O||||O|||||O||O|||||O||||O|
-|QOO||OOOOOOOPPOOOOOOO||OOQ|
+|QOO||OOOOOOOPNOOOOOOO||OOQ|
 |||O||O||O||||||||O||O||O|||
 |||O||O||O||||||||O||O||O|||
 |OOOOOO||OOOO||OOOO||OOOOOO|
