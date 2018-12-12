@@ -67,10 +67,11 @@ dire = 'R'
 # 3 - right
 # 4 - up
 moveDir = 0
+nextMoveDir = 0
 
 # slow down the move speed
 moveCounter = 0
-moveCounterMax = 3
+moveCounterMax = 10
 
 def valDown():
     return maze[pos[1] + 1][pos[0]] == 'N' or maze[pos[1] + 1][pos[0]] == 'O' or maze[pos[1] + 1][pos[0]] == 'G' or maze[pos[1] + 1][pos[0]] == 'Q'
@@ -95,28 +96,30 @@ while 1:
 
     # set floating direction
     if keyinput[pg.K_LEFT]:
-        if moveDir == 2 or moveDir == 4:
-            if not valRight():
-                continue
-        moveDir = 1
+        nextMoveDir = 1
     elif keyinput[pg.K_RIGHT]:
-        if moveDir == 2 or moveDir == 4:
-            if not valLeft():
-                continue
-        moveDir = 3
+        nextMoveDir = 3
     elif keyinput[pg.K_UP]:
-        if moveDir == 1 or moveDir == 3:
-            if not valUp():
-                continue
-        moveDir = 4
+        nextMoveDir = 4
     elif keyinput[pg.K_DOWN]:
-        if moveDir == 1 or moveDir == 3:
-            if not valDown():
-                continue
-        moveDir = 2
+        nextMoveDir = 2
+
+    if moveCounter == 0:
+    # set the moveDir to the next if possible
+        if nextMoveDir == 1:
+            if valRight():
+                moveDir = nextMoveDir
+        elif nextMoveDir == 3:
+            if valLeft():
+                moveDir = nextMoveDir
+        elif nextMoveDir == 4:
+            if valUp():
+                moveDir = nextMoveDir
+        elif nextMoveDir == 2:
+            if valDown():
+                moveDir = nextMoveDir
     
     # move player
-    if moveCounter == 0:
         if moveDir == 1:
             if valRight():
                 maze[pos[1]][pos[0]] = 'N'
@@ -144,23 +147,7 @@ while 1:
             moveCounter = 0
 
 
-    '''
-    if keyinput[pg.K_LEFT]:
-        z.moveL()
-        z.update()
-        dire = 'L'
-    elif keyinput[pg.K_RIGHT]:
-        z.moveR()
-        z.update()
-        dire = 'R' 
-    elif keyinput[pg.K_UP]:
-        z.moveU()
-        z.update()
-    elif keyinput[pg.K_DOWN]:
-        z.moveD()
-        z.update()
-
-    
+    '''    
     if dire == 'L':
         screen.blit(pg.transform.flip(z.img, True, False), z.rect)
     elif dire == 'R':
