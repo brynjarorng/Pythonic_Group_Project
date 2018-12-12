@@ -1,6 +1,7 @@
 import pygame as pg
 import sprites.BaseCharacter as BC
 import random
+from graph import Graph
 
 # 'random' path 
 def randomPath(POS, MAZE, numPaths):
