@@ -1,7 +1,7 @@
 import pygame as pg
 import logic
 #from whackmanPlayer import whackMan
-
+import AI
 
 FPS = 150
 
@@ -19,7 +19,7 @@ COINRAD = int(TILE/10)
 BIGCOINRAD = COINRAD*3
 
 # Sprite attributes
-POS = (0, 0)
+POS = (1, 1)
 
 # Colors
 BLACK = (0,0,0)
@@ -32,12 +32,12 @@ dire = 'R'
 
 
 
-def readBoard():
-    with open('whackman/maze.txt') as f:
-        for i, l in enumerate(f):
-            MAZE[i] = []
-            for c in l.strip():
-                MAZE[i].append(c)
+#def readBoard():
+with open('whackman/maze.txt') as f:
+    for i, l in enumerate(f):
+        MAZE[i] = []
+        for c in l.strip():
+            MAZE[i].append(c)
 
 def drawBoard():
     global POS
@@ -68,7 +68,7 @@ def main():
     pg.init()
     global SCREEN
     global POS
-
+    
     # 0 - stop  1 - left    2 - down    3 - right   4 - up
     moveDir = 0
     nextMoveDir = 0
@@ -81,7 +81,7 @@ def main():
     FPSCLOCK = pg.time.Clock()
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
-    readBoard()
+    #readBoard()
 
 
     while 1:
@@ -152,3 +152,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+print(AI.randomPath((1,1), MAZE, 10))
