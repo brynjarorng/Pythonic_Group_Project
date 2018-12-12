@@ -21,7 +21,9 @@ BIGCOINRAD = COINRAD*3
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
 YELLOW = (255, 255, 0)
+GOLD = (212,175,55)
 BLUE = (0, 25, 175)
+GREY = (125, 125, 125)
 
 def readBoard():
     with open('whackman/maze.txt') as f:
@@ -36,10 +38,10 @@ def buildBoard():
         for x, c in enumerate(l):
             # Walls
             if c == '|':
-                pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE, TILE), 5)
+                pg.draw.rect(SCREEN, GREY, (x * TILE, y * TILE, TILE, TILE), 5)
             # Coin
             elif c == 'O':
-                pg.draw.circle(SCREEN, YELLOW, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRAD)
+                pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRAD)
             # Ghost spawn
             elif c == 'S':
                 pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE, TILE))
@@ -48,7 +50,7 @@ def buildBoard():
                 pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE, TILE))
             # Super food
             elif c == 'Q':
-                pg.draw.circle(SCREEN, YELLOW, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRAD)
+                pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRAD)
 
 def main():
     pg.init()
