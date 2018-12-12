@@ -1,7 +1,6 @@
 import pygame as pg
 import logic
-#from whackmanPlayer import whackMan
-
+#from sprites.WhackmanChar import WhackmanChar
 
 FPS = 150
 
@@ -17,20 +16,19 @@ WINDOWHEIGHT = 31 * TILE
 # Object attributes
 COINRAD = int(TILE/10)
 BIGCOINRAD = COINRAD*3
+PLAYERSIZE = int(TILE/2)-2
 
-# Sprite attributes
-POS = (0, 0)
+# Directions
+UP = (0, -1)
+DOWN = (0, 1)
+LEFT = (-1, 0)
+RIGHT = (1, 0)
 
 # Colors
 BLACK = (0,0,0)
 GOLD = (255,223,0)
 GREY = (125, 125, 125)
 RED = (200, 50, 20)
-
-#z = whackMan(WINDOWWIDTH/2, WINDOWWIDTH*2/3 + 85, 10)
-dire = 'R'
-
-
 
 def readBoard():
     with open('whackman/maze.txt') as f:
@@ -40,6 +38,7 @@ def readBoard():
                 MAZE[i].append(c)
 
 def drawBoard():
+    global PLAYER
     global POS
     for y, l in enumerate(MAZE):
         for x, c in enumerate(l):
@@ -59,19 +58,20 @@ def drawBoard():
             elif c == 'Q':
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRAD)
             elif c == 'P':
-                pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), int(TILE/2)-2)
-                #pg.draw.rect(SCREEN, RED, (x * TILE, y * TILE, TILE-1, TILE-1))
+                pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), PLAYERSIZE)
+                #PLAYER= (x, y)
                 POS = (x, y)
 
 
 def main():
     pg.init()
     global SCREEN
+    global PLAYER
     global POS
 
-    # 0 - stop  1 - left    2 - down    3 - right   4 - up
-    moveDir = 0
-    nextMoveDir = 0
+    #PLAYER = WhackmanChar('', 'P', (0,0), PLAYERSIZE, (10,60))
+    moveDir = (0, 0)
+    nextDir = (0, 0)
     POS = (0, 0)
 
     # slow down the move speed
@@ -83,7 +83,6 @@ def main():
 
     readBoard()
 
-
     while 1:
         drawBoard()
         
@@ -94,57 +93,28 @@ def main():
             quit()
             sys.exit()
 
-        # set floating direction
+        # Set next direction on key press
         if keyinput[pg.K_LEFT]:
-            nextMoveDir = 1
+            nextDir = LEFT
         elif keyinput[pg.K_RIGHT]:
-            nextMoveDir = 3
+            nextDir = RIGHT
         elif keyinput[pg.K_UP]:
-            nextMoveDir = 4
+            nextDir = UP
         elif keyinput[pg.K_DOWN]:
-            nextMoveDir = 2
+            nextDir = DOWN
 
+        #Check if next direction is into wall
+        if logic.validateMove(MAZE, POS, nextDir):
+            moveDir = nextDir
+
+        # Move the character
         if moveCounter == 0:
-        # set the moveDir to the next if POSsible
-            if nextMoveDir == 1:
-                if logic.valRight(POS, MAZE):
-                    moveDir = nextMoveDir
-            elif nextMoveDir == 3:
-                if logic.valLeft(POS, MAZE):
-                    moveDir = nextMoveDir
-            elif nextMoveDir == 4:
-                if logic.valUp(POS, MAZE):
-                    moveDir = nextMoveDir
-            elif nextMoveDir == 2:
-                if logic.valDown(POS, MAZE):
-                    moveDir = nextMoveDir
+            POS = logic.makeMove(MAZE, POS, moveDir)
+        moveCounter += 1
         
-        # move player
-            if moveDir == 1:
-                if logic.valRight(POS, MAZE):
-                    MAZE[POS[1]][POS[0]] = 'N'
-                    MAZE[POS[1]][POS[0] - 1] = 'P'
-                    moveDir = 1
-            elif moveDir == 3:
-                if logic.valLeft(POS, MAZE):
-                    MAZE[POS[1]][POS[0]] = 'N'
-                    MAZE[POS[1]][POS[0] + 1] = 'P'
-                    moveDir = 3
-            elif moveDir == 4:
-                if logic.valUp(POS, MAZE):
-                    MAZE[POS[1]][POS[0]] = 'N'
-                    MAZE[POS[1] - 1][POS[0]] = 'P'
-                    moveDir = 4
-            elif moveDir == 2:
-                if logic.valDown(POS, MAZE):
-                    MAZE[POS[1]][POS[0]] = 'N'
-                    MAZE[POS[1] + 1][POS[0]] = 'P'
-                    moveDir = 2
-            moveCounter += 1
-        else:
-            moveCounter += 1
-            if moveCounter > moveCounterMax:
-                moveCounter = 0
+        #Reset moveCounter(speed control)
+        if moveCounter > moveCounterMax:
+            moveCounter = 0
 
         pg.display.update()
         FPSCLOCK.tick(FPS)
