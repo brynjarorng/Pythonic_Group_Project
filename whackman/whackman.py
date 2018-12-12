@@ -44,21 +44,22 @@ def drawBoard():
         for x, c in enumerate(l):
             # Walls
             if c == '|':
-                pg.draw.rect(SCREEN, GREY, (x * TILE, y * TILE, TILE, TILE), 5)
+                pg.draw.rect(SCREEN, GREY, (x * TILE, y * TILE, TILE-1, TILE-1), 4)
             # Coin
             elif c == 'O':
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRAD)
             # Ghost spawn
             elif c == 'S':
-                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE, TILE))
+                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
             # Empty tile
             elif c == 'N':
-                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE, TILE))
+                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
             # Super food
             elif c == 'Q':
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRAD)
             elif c == 'P':
-                pg.draw.rect(SCREEN, RED, (x * TILE, y * TILE, TILE, TILE))
+                pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), int(TILE/2)-2)
+                #pg.draw.rect(SCREEN, RED, (x * TILE, y * TILE, TILE-1, TILE-1))
                 POS = (x, y)
 
 def valDown():
