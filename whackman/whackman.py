@@ -1,4 +1,5 @@
 import pygame as pg
+import logic
 #from whackmanPlayer import whackMan
 
 
@@ -62,14 +63,6 @@ def drawBoard():
                 #pg.draw.rect(SCREEN, RED, (x * TILE, y * TILE, TILE-1, TILE-1))
                 POS = (x, y)
 
-def valDown():
-    return MAZE[POS[1] + 1][POS[0]] == 'N' or MAZE[POS[1] + 1][POS[0]] == 'O' or MAZE[POS[1] + 1][POS[0]] == 'G' or MAZE[POS[1] + 1][POS[0]] == 'Q'
-def valUp():
-    return MAZE[POS[1] - 1][POS[0]] == 'N' or MAZE[POS[1] - 1][POS[0]] == 'O' or MAZE[POS[1] - 1][POS[0]] == 'G' or MAZE[POS[1] - 1][POS[0]] == 'Q'
-def valLeft():
-    return MAZE[POS[1]][POS[0] + 1] == 'N' or MAZE[POS[1]][POS[0] + 1] == 'O' or MAZE[POS[1]][POS[0] + 1] == 'G' or MAZE[POS[1]][POS[0] + 1] == 'Q'
-def valRight():
-    return MAZE[POS[1]][POS[0] - 1] == 'N' or MAZE[POS[1]][POS[0] - 1] == 'O' or MAZE[POS[1]][POS[0] - 1] == 'G' or MAZE[POS[1]][POS[0] - 1] == 'Q'
 
 def main():
     pg.init()
@@ -114,36 +107,36 @@ def main():
         if moveCounter == 0:
         # set the moveDir to the next if POSsible
             if nextMoveDir == 1:
-                if valRight():
+                if logic.valRight(POS, MAZE):
                     moveDir = nextMoveDir
             elif nextMoveDir == 3:
-                if valLeft():
+                if logic.valLeft(POS, MAZE):
                     moveDir = nextMoveDir
             elif nextMoveDir == 4:
-                if valUp():
+                if logic.valUp(POS, MAZE):
                     moveDir = nextMoveDir
             elif nextMoveDir == 2:
-                if valDown():
+                if logic.valDown(POS, MAZE):
                     moveDir = nextMoveDir
         
         # move player
             if moveDir == 1:
-                if valRight():
+                if logic.valRight(POS, MAZE):
                     MAZE[POS[1]][POS[0]] = 'N'
                     MAZE[POS[1]][POS[0] - 1] = 'P'
                     moveDir = 1
             elif moveDir == 3:
-                if valLeft():
+                if logic.valLeft(POS, MAZE):
                     MAZE[POS[1]][POS[0]] = 'N'
                     MAZE[POS[1]][POS[0] + 1] = 'P'
                     moveDir = 3
             elif moveDir == 4:
-                if valUp():
+                if logic.valUp(POS, MAZE):
                     MAZE[POS[1]][POS[0]] = 'N'
                     MAZE[POS[1] - 1][POS[0]] = 'P'
                     moveDir = 4
             elif moveDir == 2:
-                if valDown():
+                if logic.valDown(POS, MAZE):
                     MAZE[POS[1]][POS[0]] = 'N'
                     MAZE[POS[1] + 1][POS[0]] = 'P'
                     moveDir = 2
