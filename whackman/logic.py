@@ -37,4 +37,3 @@ def moveGhost(maze, ghost):
     maze[newPos[1]][newPos[0]] = ghost.char
     ghost.pos = newPos
     return ghost
-

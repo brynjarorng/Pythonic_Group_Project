@@ -1,7 +1,9 @@
 import pygame as pg
 import logic
-from sprites.WhackmanChar import WhackmanChar
-from sprites.Ghost import Ghost 
+import AI
+from graphAPI import GraphAPI
+from sprites.whackmanChar import WhackmanChar
+from sprites.ghost import Ghost 
 
 FPS = 100
 
@@ -18,6 +20,9 @@ WINDOWHEIGHT = 31 * TILE
 COINRADIUS = int(TILE/10)
 BIGCOINRADIUS = int(TILE/3)
 ENTITYRADIUS = int(TILE/2)-2
+
+# Sprite attributes
+POS = (1, 1)
 
 # Directions
 UP = (0, -1)
@@ -44,6 +49,27 @@ def readBoard():
             MAZE[i] = []
             for c in l.strip():
                 MAZE[i].append(c)
+'''
+mazeGraph = GraphAPI()
+def buildGraph(MAZE):
+    for y,line in enumerate(MAZE):
+        for x,unit in enumerate(line):
+            if unit != '|':
+                connectedPoints = []
+                # above
+                if logic.validateMove(MAZE, (x,y), (-1, 0)):
+                    connectedPoints.append((x - 1, y))
+                # right
+                if logic.validateMove(MAZE, (x,y), (0, 1)):
+                    connectedPoints.append((x, y + 1))
+                # below
+                if logic.validateMove(MAZE, (x,y), (1, 0)):
+                    connectedPoints.append((x + 1, y))
+                # left
+                if logic.validateMove(MAZE, (x,y), (0, -1)):
+                    connectedPoints.append((x, y - 1))
+                mazeGraph.add((x,y), connectedPoints)
+'''
 
 def drawGame():
     for y, l in enumerate(MAZE):
@@ -152,16 +178,35 @@ def main():
 
         for ghost in [GHOSTA, GHOSTB, GHOSTC, GHOSTD]:
             if ghost.moveCount > maxSpeed:
+                if not ghost.path:
+                    ghost.path = AI.randomPath(ghost.pos, MAZE, 50)
+                nextPos = ghost.path.pop()
+                #print(ghost.pos)
+                #print(nextPos)
+                print(ghost.moveDir)
+                ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
                 ghost = logic.moveGhost(MAZE, ghost)
                 ghost.moveCount = 0
             else:
                 ghost.moveCount += ghost.speed
 
+        '''
+        # TEST: Move the 'ghost'    
+        if moveCounterGHOST == 0:
+            if len(ghostMoves) == 0:
+                ghostMoves = AI.randomPath(ghost, MAZE, 50)
+            currMove = ghostMoves.pop()
+            ghost = logic.makeMoveGHOST(MAZE, ghost, (currMove[0]-ghost[0], currMove[1]-ghost[1]))
+        moveCounterGHOST += 1
+        '''
 
-
-        pg.display.update()
+        pg.display.flip()
         FPSCLOCK.tick(FPS)
 
 
 if __name__ == '__main__':
     main()
+
+
+#readBoard()
+#print(AI.randomPath((1,29), MAZE, 10))
