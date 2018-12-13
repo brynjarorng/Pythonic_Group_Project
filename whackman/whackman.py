@@ -147,10 +147,9 @@ def main():
         if moveCounterGHOST == 0:
             if len(ghostMoves) == 0:
                 #ghostMoves = AI.randomPath(ghost, MAZE, 50)
-                #ghostMoves = AI.shortestPath(ghost, POS, MAZE, mazeGraph, 5)
+                #ghostMoves = AI.shortestPath(ghost, POS, MAZE, mazeGraph, 5) # BFS NOT WORKING WITH NEW POS
                 ghostMoves = AI.distShortPath(ghost, POS, MAZE, mazeGraph, 12)
-            currMove = ghostMoves.pop()
-            ghost = logic.makeMoveGHOST(MAZE, ghost, (currMove[0]-ghost[0], currMove[1]-ghost[1]))
+            ghost = logic.makeMoveGHOST(MAZE, ghost, ghostMoves.pop())
         moveCounterGHOST += 1
         
         #Reset moveCounter(speed control)
