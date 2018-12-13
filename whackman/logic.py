@@ -1,13 +1,21 @@
 import whackman as w
 
-def validateMove(MAZE, POS, nextDir):
-    newPOS = (POS[0] + nextDir[0], POS[1] + nextDir[1])
+def validateMove(MAZE, PLAYER):
+    newPOS = (PLAYER.pos[0] + PLAYER.nextDir[0], PLAYER.pos[1] + PLAYER.nextDir[1])
+    if newPOS == (28, 14):
+        return True
     return MAZE[newPOS[1]][newPOS[0]] != '|' 
 
-def makeMove(MAZE, POS, moveDir):
-    newPOS = (POS[0] + moveDir[0], POS[1] + moveDir[1])
-    if MAZE[newPOS[1]][newPOS[0]] != '|':
-        MAZE[POS[1]][POS[0]] = 'N'
-        MAZE[newPOS[1]][newPOS[0]] = 'P'
+def makeMove(MAZE, PLAYER):
+    newPOS = (PLAYER.pos[0] + PLAYER.moveDir[0], PLAYER.pos[1] + PLAYER.moveDir[1])
+    if newPOS == (28, 14):
+        newPOS = (0, 14)
+        MAZE[PLAYER.pos[1]][PLAYER.pos[0]] = 'N'
+        MAZE[newPOS[1]][newPOS[0]] = PLAYER.char
         return newPOS
-    return POS
+        
+    if MAZE[newPOS[1]][newPOS[0]] != '|':
+        MAZE[PLAYER.pos[1]][PLAYER.pos[0]] = 'N'
+        MAZE[newPOS[1]][newPOS[0]] = PLAYER.char
+        return newPOS
+    return PLAYER.pos

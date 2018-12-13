@@ -1,6 +1,6 @@
 import pygame as pg
 import logic
-#from sprites.WhackmanChar import WhackmanChar
+from sprites.whackmanChar import WhackmanChar
 
 FPS = 150
 
@@ -27,8 +27,10 @@ RIGHT = (1, 0)
 # Colors
 BLACK = (0,0,0)
 GOLD = (255,223,0)
+SILVER = (192, 192, 192)
 GREY = (125, 125, 125)
 RED = (200, 50, 20)
+BLUE = (0, 25, 175)
 
 def readBoard():
     with open('whackman/maze.txt') as f:
@@ -38,8 +40,7 @@ def readBoard():
                 MAZE[i].append(c)
 
 def drawBoard():
-    global PLAYER
-    global POS
+    global PLAYER1, PLAYER2
     for y, l in enumerate(MAZE):
         for x, c in enumerate(l):
             # Walls
@@ -59,20 +60,18 @@ def drawBoard():
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRAD)
             elif c == 'P':
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), PLAYERSIZE)
-                #PLAYER= (x, y)
-                POS = (x, y)
-
+                PLAYER1.pos = (x, y)
+            elif c == 'p':
+                pg.draw.circle(SCREEN, SILVER, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), PLAYERSIZE)
+                PLAYER2.pos = (x, y)
 
 def main():
     pg.init()
     global SCREEN
-    global PLAYER
-    global POS
+    global PLAYER1, PLAYER2
 
-    #PLAYER = WhackmanChar('', 'P', (0,0), PLAYERSIZE, (10,60))
-    moveDir = (0, 0)
-    nextDir = (0, 0)
-    POS = (0, 0)
+    PLAYER1 = WhackmanChar('', 'P', (0,0), PLAYERSIZE, (10,60))
+    PLAYER2 = WhackmanChar('', 'p', (0,0), PLAYERSIZE, (10,60))
 
     # slow down the move speed
     moveCounter = 0
@@ -95,21 +94,34 @@ def main():
 
         # Set next direction on key press
         if keyinput[pg.K_LEFT]:
-            nextDir = LEFT
+            PLAYER1.nextDir = LEFT
         elif keyinput[pg.K_RIGHT]:
-            nextDir = RIGHT
+            PLAYER1.nextDir = RIGHT
         elif keyinput[pg.K_UP]:
-            nextDir = UP
+            PLAYER1.nextDir = UP
         elif keyinput[pg.K_DOWN]:
-            nextDir = DOWN
+            PLAYER1.nextDir = DOWN
+
+        if keyinput[pg.K_a]:
+            PLAYER2.nextDir = LEFT
+        elif keyinput[pg.K_d]:
+            PLAYER2.nextDir = RIGHT
+        elif keyinput[pg.K_w]:
+            PLAYER2.nextDir = UP
+        elif keyinput[pg.K_s]:
+            PLAYER2.nextDir = DOWN
 
         #Check if next direction is into wall
-        if logic.validateMove(MAZE, POS, nextDir):
-            moveDir = nextDir
+        if logic.validateMove(MAZE, PLAYER1):
+            PLAYER1.moveDir = PLAYER1.nextDir
 
+        if logic.validateMove(MAZE, PLAYER2):
+            PLAYER2.moveDir = PLAYER2.nextDir
+        
         # Move the character
         if moveCounter == 0:
-            POS = logic.makeMove(MAZE, POS, moveDir)
+            PLAYER1.pos = logic.makeMove(MAZE, PLAYER1)
+            PLAYER2.pos = logic.makeMove(MAZE, PLAYER2)
         moveCounter += 1
         
         #Reset moveCounter(speed control)

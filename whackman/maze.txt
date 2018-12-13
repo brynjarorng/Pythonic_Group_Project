@@ -21,7 +21,7 @@ NNNNNNONNN|NNNNNN|NNNONNNNNN
 |OOOOOOOOOOOO||OOOOOOOOOOOO|
 |O||||O|||||O||O|||||O||||O|
 |O||||O|||||O||O|||||O||||O|
-|QOO||OOOOOOOPNOOOOOOO||OOQ|
+|QOO||OOOOOOOpPOOOOOOO||OOQ|
 |||O||O||O||||||||O||O||O|||
 |||O||O||O||||||||O||O||O|||
 |OOOOOO||OOOO||OOOO||OOOOOO|
