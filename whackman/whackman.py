@@ -92,12 +92,12 @@ def main():
     global GHOSTA, GHOSTB, GHOSTC, GHOSTD
 
     # Initializing entities
-    PLAYER1 = WhackmanChar('', 'P', 'N', (0, 0), (0, 0), ENTITYRADIUS, 20, 0)
-    PLAYER2 = WhackmanChar('', 'p', 'N', (0, 0), (0, 0), ENTITYRADIUS, 20, 0)
-    GHOSTA = Ghost('', 'A', 'N', (0, 0), (0, 0), ENTITYRADIUS, 10, 0)
-    GHOSTB = Ghost('', 'B', 'N', (0, 0), (0, 0), ENTITYRADIUS, 10, 0)
-    GHOSTC = Ghost('', 'C', 'N', (0, 0), (0, 0), ENTITYRADIUS, 10, 0)
-    GHOSTD = Ghost('', 'D', 'N', (0, 0), (0, 0), ENTITYRADIUS, 10, 0)
+    PLAYER1 = WhackmanChar('', 'P', 'N', (0, 0), (0, 0), 20, 0)
+    PLAYER2 = WhackmanChar('', 'p', 'N', (0, 0), (0, 0), 20, 0)
+    GHOSTA = Ghost('', 'A', 'N', (0, 0), (0, 0), 10, 0)
+    GHOSTB = Ghost('', 'B', 'N', (0, 0), (0, 0), 10, 0)
+    GHOSTC = Ghost('', 'C', 'N', (0, 0), (0, 0), 10, 0)
+    GHOSTD = Ghost('', 'D', 'N', (0, 0), (0, 0), 10, 0)
 
     # Used to regulate entity speeds
     maxSpeed = 100
