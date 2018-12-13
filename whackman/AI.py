@@ -2,6 +2,7 @@ import pygame as pg
 import sprites.BaseCharacter as BC
 import random
 from graphAPI import GraphAPI
+import math
 
 # 'random' path 
 def randomPath(POS, MAZE, pathLength):
@@ -31,5 +32,30 @@ def availablePaths(POS, MAZE):
     return newPos
 
 # find shortest path to player
+# to-do
 def shortestPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
-    return GraphAPI.shortest(ghostPOS, playerPOS)[0:pathLength]
+    return graph.BFS(ghostPOS, playerPOS, graph)#[0:pathLength]
+
+
+# distance based shortest path
+def distShortPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
+    currPath = ghostPOS
+    selectedPath = [ghostPOS]
+    dist = 0.0
+    
+    for i in range(pathLength):
+        short = 99999999999999999999999999.0
+        availPaths = availablePaths(currPath, MAZE)
+        # select path
+        oldPath = selectedPath[len(selectedPath) - 2]
+        if oldPath in availPaths and len(availPaths) > 1:
+            availPaths.remove(oldPath)
+        for p in availPaths:
+            dist = math.sqrt((p[0] - playerPOS[0])**2 + (p[1] - playerPOS[1])**2)
+            if dist < short:
+                short = dist
+                currPath = p
+
+        selectedPath.append(currPath)
+
+    return selectedPath[::-1]

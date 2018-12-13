@@ -4,7 +4,7 @@ import AI
 from graphAPI import GraphAPI
 #from sprites.WhackmanChar import WhackmanChar
 
-FPS = 600
+FPS = 100
 
 # The board
 MAZE = [0] * 31
@@ -146,7 +146,9 @@ def main():
         # TEST: Move the 'ghost'    
         if moveCounterGHOST == 0:
             if len(ghostMoves) == 0:
-                ghostMoves = AI.randomPath(ghost, MAZE, 50)
+                #ghostMoves = AI.randomPath(ghost, MAZE, 50)
+                #ghostMoves = AI.shortestPath(ghost, POS, MAZE, mazeGraph, 5)
+                ghostMoves = AI.distShortPath(ghost, POS, MAZE, mazeGraph, 12)
             currMove = ghostMoves.pop()
             ghost = logic.makeMoveGHOST(MAZE, ghost, (currMove[0]-ghost[0], currMove[1]-ghost[1]))
         moveCounterGHOST += 1
