@@ -1,9 +1,10 @@
 import pygame as pg
 import logic
 import AI
+from graphAPI import GraphAPI
 #from sprites.WhackmanChar import WhackmanChar
 
-FPS = 30
+FPS = 600
 
 # The board
 MAZE = [0] * 31
@@ -40,6 +41,27 @@ def readBoard():
             MAZE[i] = []
             for c in l.strip():
                 MAZE[i].append(c)
+
+mazeGraph = GraphAPI()
+def buildGraph(MAZE):
+    for y,line in enumerate(MAZE):
+        for x,unit in enumerate(line):
+            if unit != '|':
+                connectedPoints = []
+                # above
+                if logic.validateMove(MAZE, (x,y), (-1, 0)):
+                    connectedPoints.append((x - 1, y))
+                # right
+                if logic.validateMove(MAZE, (x,y), (0, 1)):
+                    connectedPoints.append((x, y + 1))
+                # below
+                if logic.validateMove(MAZE, (x,y), (1, 0)):
+                    connectedPoints.append((x + 1, y))
+                # left
+                if logic.validateMove(MAZE, (x,y), (0, -1)):
+                    connectedPoints.append((x, y - 1))
+                mazeGraph.add((x,y), connectedPoints)
+
 
 def drawBoard():
     global PLAYER
@@ -90,6 +112,7 @@ def main():
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
     readBoard()
+    buildGraph(MAZE)
 
     while 1:
         drawBoard()
@@ -144,4 +167,4 @@ if __name__ == '__main__':
 
 
 #readBoard()
-#print(AI.randomPath((1,1), MAZE, 10))
+#print(AI.randomPath((1,29), MAZE, 10))

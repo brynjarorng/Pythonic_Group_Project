@@ -1,20 +1,20 @@
 
-class Graph:
+class GraphAPI:
     def __init__(self):
         self.g = {}
         
     def add(self, point, connected=[]):
         # add point as a node if not in graph
         if point not in self.g:
-            self.g[point] = connected
+            self.g[point] = set(connected)
         
         # add this connection to all other nodes in the graph, create them if they do not exist
         for node in connected:
             if node not in self.g:
-                self.g[node] = [point]
+                self.g[node] = set([point])
             else:
                 tmp = self.g[node]
-                tmp.append(point)
+                tmp.add(point)
                 self.g[node] = tmp
         
     def remove(self, point):
@@ -49,6 +49,7 @@ def find_shortest_path(graph, start, end, path=[]):
                         shortest = newpath
         return shortest
 
+'''
 # find shortest path
 v = Graph()
 v.add((1,1))
@@ -57,3 +58,4 @@ print(v.g)
 print(v.shortest((1,1),(1,2)))
 v.remove((1,1))
 print(v.g)
+'''

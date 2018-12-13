@@ -1,13 +1,13 @@
 import pygame as pg
 import sprites.BaseCharacter as BC
 import random
-from graph import Graph
+from graphAPI import GraphAPI
 
 # 'random' path 
-def randomPath(POS, MAZE, numPaths):
+def randomPath(POS, MAZE, pathLength):
     currPath = POS
     selectedPath = [POS]
-    for i in range(numPaths):
+    for i in range(pathLength):
         availPaths = availablePaths(currPath, MAZE)
         # select path
         oldPath = selectedPath[len(selectedPath) - 2]
@@ -20,14 +20,16 @@ def randomPath(POS, MAZE, numPaths):
 
 def availablePaths(POS, MAZE):
     newPos = []
-    if POS[0] - 1 > 0 and MAZE[POS[1] - 1][POS[0]] != '|':
+    if POS[0] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|':
         newPos.append((POS[0], POS[1] - 1))
     if POS[0] + 1 < len(MAZE) and MAZE[POS[1] + 1][POS[0]] != '|':
         newPos.append((POS[0], POS[1] + 1))
-    if POS[1] - 1 > 0 and MAZE[POS[1]][POS[0] - 1] != '|':
+    if POS[1] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|':
         newPos.append((POS[0] - 1, POS[1]))
     if POS[1] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|':
         newPos.append((POS[0] + 1, POS[1]))
     return newPos
 
 # find shortest path to player
+def shortestPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
+    return GraphAPI.shortest(ghostPOS, playerPOS)[0:pathLength]

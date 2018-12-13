@@ -2,7 +2,10 @@ import whackman as w
 
 def validateMove(MAZE, POS, nextDir):
     newPOS = (POS[0] + nextDir[0], POS[1] + nextDir[1])
-    return MAZE[newPOS[1]][newPOS[0]] != '|' 
+    # return false if pos is not inside the array
+    if 0 <= newPOS[0] < len(MAZE[0]) and 0 <= newPOS[1] < len(MAZE):
+        return MAZE[newPOS[1]][newPOS[0]] != '|' 
+    return False
 
 def makeMove(MAZE, POS, moveDir):
     newPOS = (POS[0] + moveDir[0], POS[1] + moveDir[1])
