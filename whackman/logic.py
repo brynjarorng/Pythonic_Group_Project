@@ -1,21 +1,40 @@
 import whackman as w
 
-def validateMove(MAZE, PLAYER):
-    newPOS = (PLAYER.pos[0] + PLAYER.nextDir[0], PLAYER.pos[1] + PLAYER.nextDir[1])
-    if newPOS == (28, 14):
-        return True
-    return MAZE[newPOS[1]][newPOS[0]] != '|' 
+def calcNewPos(pos, direction):
+    newPos = (pos[0] + direction[0], pos[1] + direction[1])
+    if newPos == (28, 14):
+        newPos = (0, 14)
+    return newPos
 
-def makeMove(MAZE, PLAYER):
-    newPOS = (PLAYER.pos[0] + PLAYER.moveDir[0], PLAYER.pos[1] + PLAYER.moveDir[1])
-    if newPOS == (28, 14):
-        newPOS = (0, 14)
-        MAZE[PLAYER.pos[1]][PLAYER.pos[0]] = 'N'
-        MAZE[newPOS[1]][newPOS[0]] = PLAYER.char
-        return newPOS
+def validateNextDir(maze, player):
+    newPos = calcNewPos(player.pos, player.nextDir)
+    return maze[newPos[1]][newPos[0]] != '|' 
+
+def movePlayer(maze, player):
+    newPos = calcNewPos(player.pos, player.moveDir)
+    beneath = maze[newPos[1]][newPos[0]] 
+    if beneath == '|':
+        return player
         
-    if MAZE[newPOS[1]][newPOS[0]] != '|':
-        MAZE[PLAYER.pos[1]][PLAYER.pos[0]] = 'N'
-        MAZE[newPOS[1]][newPOS[0]] = PLAYER.char
-        return newPOS
-    return PLAYER.pos
+    player.beneath = beneath
+    maze[player.pos[1]][player.pos[0]] = 'N'
+    maze[newPos[1]][newPos[0]] = player.char
+    player.pos = newPos
+    return player
+
+def updateScore(player):
+    if player.beneath == 'O':
+        player.points += 10
+    elif player.beneath == 'Q':
+        player.points += 100
+    return player 
+
+def moveGhost(maze, ghost):
+    newPos = calcNewPos(ghost.pos, ghost.moveDir)
+    beneath = maze[newPos[1]][newPos[0]] 
+    maze[ghost.pos[1]][ghost.pos[0]] = ghost.beneath
+    ghost.beneath = beneath
+    maze[newPos[1]][newPos[0]] = ghost.char
+    ghost.pos = newPos
+    return ghost
+
