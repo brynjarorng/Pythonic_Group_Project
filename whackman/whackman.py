@@ -5,7 +5,7 @@ from graphAPI import GraphAPI
 from sprites.Player import Player
 from sprites.Ghost import Ghost 
 
-FPS = 1000
+FPS = 100
 
 def readBoard():
     with open('whackman/maze.txt') as f:
@@ -116,6 +116,16 @@ def drawGame():
             elif c == 'D':
                 pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE-1, TILE-1))
                 GHOSTD.pos = (x, y)
+    
+def checkIfDead(player, ghosts, MAZE):
+    for ghost in ghosts:
+        if player.pos == ghost.pos:
+            # dec. live counter and hide the player
+            player.lives -= 1
+            player.diedThisGame = True
+            MAZE[player.pos[1]][player.pos[0]] = 'N'
+            player.pos = (-1, -1)
+            return
 
 def main():
     pg.init()
@@ -171,7 +181,7 @@ def main():
             if logic.validateNextDir(MAZE, player):
                 player.moveDir = player.nextDir
         
-        # Move the character and iterate their movement counters
+        # move the players
         for player in [PLAYER1, PLAYER2]:
             if player.moveCount > maxSpeed:
                 player = logic.movePlayer(MAZE, player)
@@ -180,15 +190,22 @@ def main():
             else:
                 player.moveCount += player.speed
 
+        # move the ghosts
         for i, ghost in enumerate([GHOSTA, GHOSTB, GHOSTC, GHOSTD]):
             if ghost.moveCount > maxSpeed:
                 if not ghost.path:
                     if i < 2:
                         ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
                     elif i is 2:
-                        ghost.path = AI.distShortPath(ghost.pos, PLAYER1.pos, MAZE, 10)
+                        if PLAYER1.diedThisGame:
+                            ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
+                        else:
+                            ghost.path = AI.distShortPath(ghost.pos, PLAYER1.pos, MAZE, 10)
                     elif i is 3:
-                        ghost.path = AI.distShortPath(ghost.pos, PLAYER2.pos, MAZE, 10)
+                        if PLAYER2.diedThisGame:
+                            ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
+                        else:
+                            ghost.path = AI.distShortPath(ghost.pos, PLAYER1.pos, MAZE, 10)
                 nextPos = ghost.path.pop()
                 ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
                 ghost = logic.moveGhost(MAZE, ghost)
@@ -196,23 +213,14 @@ def main():
             else:
                 ghost.moveCount += ghost.speed
 
-        '''
-        # TEST: Move the 'ghost'    
-        if moveCounterGHOST == 0:
-            if len(ghostMoves) == 0:
-                ghostMoves = AI.randomPath(ghost, MAZE, 50)
-            currMove = ghostMoves.pop()
-            ghost = logic.makeMoveGHOST(MAZE, ghost, (currMove[0]-ghost[0], currMove[1]-ghost[1]))
-        moveCounterGHOST += 1
-        '''
-
+        # check if player should be dead
+        for player in [PLAYER1, PLAYER2]:
+            if not player.diedThisGame:
+                checkIfDead(player, [GHOSTA, GHOSTB, GHOSTC, GHOSTD], MAZE)
+        
         pg.display.flip()
         FPSCLOCK.tick(FPS)
 
 
 if __name__ == '__main__':
     main()
-
-
-#readBoard()
-#print(AI.randomPath((1,29), MAZE, 10))
