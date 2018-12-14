@@ -1,6 +1,6 @@
 import pygame as pg
 
-class BaseCharacter:
+class Entity:
     def __init__(self, img, char, beneath, startPos, moveDir, speed, moveCount):
         self.img = img
         self.char = char
