@@ -17,23 +17,27 @@ def movePlayer(maze, player):
         return player
         
     player.beneath = beneath
-    maze[player.pos[1]][player.pos[0]] = 'N'
+    maze[player.pos[1]][player.pos[0]] = '_'
     maze[newPos[1]][newPos[0]] = player.char
     player.pos = newPos
     return player
 
 def updateScore(player):
-    if player.beneath == 'O':
+    if player.beneath == '0':
         player.points += 10
-    elif player.beneath == 'Q':
+    elif player.beneath == '1':
         player.points += 100
     return player 
 
 def moveGhost(maze, ghost):
     newPos = calcNewPos(ghost.pos, ghost.moveDir)
     beneath = maze[newPos[1]][newPos[0]] 
+    
     maze[ghost.pos[1]][ghost.pos[0]] = ghost.beneath
-    ghost.beneath = beneath
+    
+    if not beneath.isalpha():
+        ghost.beneath = beneath
+
     maze[newPos[1]][newPos[0]] = ghost.char
     ghost.pos = newPos
     return ghost

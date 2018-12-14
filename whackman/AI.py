@@ -1,5 +1,5 @@
 import pygame as pg
-import sprites.BaseCharacter as BC
+import sprites.Entity as BC
 import random
 from graphAPI import GraphAPI
 import math
@@ -10,14 +10,12 @@ def randomPath(POS, MAZE, pathLength):
     selectedPath = [POS]
     for i in range(pathLength):
         availPaths = availablePaths(currPath, MAZE)
-        # select path
         oldPath = selectedPath[len(selectedPath) - 2]
         if oldPath in availPaths and len(availPaths) > 1:
             availPaths.remove(oldPath)
         currPath = availPaths[random.randint(0, len(availPaths) - 1)]
         selectedPath.append(currPath)
-
-    return selectedPath[::-1]
+    return selectedPath[::-1][:-1]
 
 def availablePaths(POS, MAZE):
     newPos = []

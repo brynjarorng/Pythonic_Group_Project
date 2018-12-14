@@ -2,8 +2,8 @@ import pygame as pg
 import logic
 import AI
 from graphAPI import GraphAPI
-from sprites.whackmanChar import WhackmanChar
-from sprites.ghost import Ghost 
+from sprites.Player import Player
+from sprites.Ghost import Ghost 
 
 FPS = 100
 
@@ -60,7 +60,9 @@ def buildGraph(MAZE):
                 if logic.validateMove(MAZE, (x,y), (-1, 0)):
                     connectedPoints.append((x - 1, y))
                 # right
-                if logic.validateMove(MAZE, (x,y), (0, 1)):
+                if logic.validateMove(MAZE, (x,y)
+                
+                , (0, 1)):
                     connectedPoints.append((x, y + 1))
                 # below
                 if logic.validateMove(MAZE, (x,y), (1, 0)):
@@ -76,15 +78,17 @@ def drawGame():
         for x, c in enumerate(l):
             # Walls
             if c == '|':
-                pg.draw.rect(SCREEN, GREY, (x * TILE, y * TILE, TILE-1, TILE-1), 4)
+                pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE-1, TILE-1), 4)
             # Empty tile
-            elif c == 'N':
+            elif c == '_':
                 pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
             # Coin
-            elif c == 'O':
+            elif c == '0':
+                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRADIUS)
             # Super food
-            elif c == 'Q':
+            elif c == '1':
+                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRADIUS)
             # Player 1
             elif c == 'P':
@@ -118,12 +122,12 @@ def main():
     global GHOSTA, GHOSTB, GHOSTC, GHOSTD
 
     # Initializing entities
-    PLAYER1 = WhackmanChar('', 'P', 'N', (0, 0), (0, 0), 20, 0)
-    PLAYER2 = WhackmanChar('', 'p', 'N', (0, 0), (0, 0), 20, 0)
-    GHOSTA = Ghost('', 'A', 'N', (0, 0), (0, 0), 10, 0)
-    GHOSTB = Ghost('', 'B', 'N', (0, 0), (0, 0), 10, 0)
-    GHOSTC = Ghost('', 'C', 'N', (0, 0), (0, 0), 10, 0)
-    GHOSTD = Ghost('', 'D', 'N', (0, 0), (0, 0), 10, 0)
+    PLAYER1 = Player('', 'P', '_', (0, 0), (0, 0), 20, 0)
+    PLAYER2 = Player('', 'p', '_', (0, 0), (0, 0), 20, 0)
+    GHOSTA = Ghost('', 'A', '_', (0, 0), (0, 0), 10, 0)
+    GHOSTB = Ghost('', 'B', '_', (0, 0), (0, 0), 10, 0)
+    GHOSTC = Ghost('', 'C', '_', (0, 0), (0, 0), 10, 0)
+    GHOSTD = Ghost('', 'D', '_', (0, 0), (0, 0), 10, 0)
 
     # Used to regulate entity speeds
     maxSpeed = 100
@@ -179,11 +183,8 @@ def main():
         for ghost in [GHOSTA, GHOSTB, GHOSTC, GHOSTD]:
             if ghost.moveCount > maxSpeed:
                 if not ghost.path:
-                    ghost.path = AI.randomPath(ghost.pos, MAZE, 50)
+                    ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
                 nextPos = ghost.path.pop()
-                #print(ghost.pos)
-                #print(nextPos)
-                print(ghost.moveDir)
                 ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
                 ghost = logic.moveGhost(MAZE, ghost)
                 ghost.moveCount = 0
