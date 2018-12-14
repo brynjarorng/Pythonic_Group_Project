@@ -3,7 +3,7 @@ from pygame.locals import *
 from pathlib import Path
 
 SCALE = 2
-FPS = 300 * SCALE
+FPS = 200 * SCALE
 
 WINWIDTH = 400 * SCALE
 WINHEIGHT = 300 * SCALE
@@ -80,9 +80,20 @@ def resetObjects(ball, paddle1, paddle2):
     return ball, paddle1, paddle2
 
 def checkHitBall(ball, paddle1, paddle2, ballDirX):
+    # right paddle
     if ballDirX == 1 and paddle1.left == ball.right and paddle1.top < ball.bottom and paddle1.bottom > ball.top:
-        HITSOUND.play()
-        return -1
+        HITSOUND.play() 
+        # check top third
+        if paddle1.top - (paddle1.top-paddle1.bottom)*(1/3) <= ball.centery < paddle1.top:
+            return (-1, 0)
+        # check bottom third
+        elif paddle1.bottom <= ball.centery < paddle1.bottom + (paddle1.top-paddle1.bottom)*(1/3):
+            return (-1 , 0)
+        # else middle
+        else:
+            return (-1, 0)
+            
+    # left paddle
     elif ballDirX == -1 and paddle2.right == ball.left and paddle2.top < ball.bottom and paddle2.bottom > ball.top:
         HITSOUND.play()
         return -1
@@ -129,16 +140,22 @@ def main():
 
         pygame.display.update()
 
+        # wait if either player scored
         if SCORESTATUS:
             pygame.time.wait(500)
             SCORESTATUS = False
 
+        keys = pygame.key.get_pressed()
+
+        # two ways to quit the game, escape or press the X
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
                 sys.exit()
-
-        keys = pygame.key.get_pressed()
+        if keys[K_ESCAPE]:
+            quit()
+            sys.exit()
+        
         if keys[K_UP]:
             paddle1.y -= 1
         elif keys[K_DOWN]:
