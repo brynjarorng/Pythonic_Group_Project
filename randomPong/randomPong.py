@@ -123,7 +123,7 @@ def main():
     #Load Audio
     pygame.mixer.pre_init(44100, 16, 2, 4096)
     p = Path('./')
-    p = p / 'pong' / '4359__noisecollector__pongblipf4.wav'
+    p = p / 'randomPong' / '4359__noisecollector__pongblipf4.wav'
     HITSOUND = pygame.mixer.Sound(str(p.absolute()))
 
     #Setting up fonts for the score
