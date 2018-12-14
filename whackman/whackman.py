@@ -5,7 +5,7 @@ from graphAPI import GraphAPI
 from sprites.Player import Player
 from sprites.Ghost import Ghost 
 
-FPS = 100
+FPS = 1000
 
 def readBoard():
     with open('whackman/maze.txt') as f:

@@ -1,17 +1,27 @@
 import whackman as w
 
-def calcNewPos(pos, direction):
+def calcNewPos(pos, direction, maze):
     newPos = (pos[0] + direction[0], pos[1] + direction[1])
-    if newPos == (28, 14):
-        newPos = (0, 14)
+    # if trying to index out of the maze go to the other side
+    # x
+    if newPos[0] >= len(maze[0]):
+        newPos = (0, pos[1])
+    elif newPos[0] < 0:
+        newPos = (len(maze[0]) - 1, pos[1])
+    
+    # y
+    if newPos[1] >= len(maze):
+        newPos = (pos[0], 0)
+    elif newPos[1] < 0:
+        newPos = (pos[0], len(maze[1]) - 1)
     return newPos
 
 def validateNextDir(maze, player):
-    newPos = calcNewPos(player.pos, player.nextDir)
+    newPos = calcNewPos(player.pos, player.nextDir, maze)
     return maze[newPos[1]][newPos[0]] != '|' 
 
 def movePlayer(maze, player):
-    newPos = calcNewPos(player.pos, player.moveDir)
+    newPos = calcNewPos(player.pos, player.moveDir, maze)
     beneath = maze[newPos[1]][newPos[0]] 
     if beneath == '|':
         return player
@@ -30,7 +40,7 @@ def updateScore(player):
     return player 
 
 def moveGhost(maze, ghost):
-    newPos = calcNewPos(ghost.pos, ghost.moveDir)
+    newPos = calcNewPos(ghost.pos, ghost.moveDir, maze)
     beneath = maze[newPos[1]][newPos[0]] 
     
     maze[ghost.pos[1]][ghost.pos[0]] = ghost.beneath

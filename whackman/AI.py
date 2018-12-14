@@ -19,13 +19,14 @@ def randomPath(POS, MAZE, pathLength):
 
 def availablePaths(POS, MAZE):
     newPos = []
-    if POS[0] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|' and MAZE[POS[1] - 1][POS[0]] != '-':
+    # first check if going out of bounds and go to the other side of the game board
+    if POS[1] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|' and MAZE[POS[1] - 1][POS[0]] != '-':
         newPos.append((POS[0], POS[1] - 1))
-    if POS[0] + 1 < len(MAZE) and MAZE[POS[1] + 1][POS[0]] != '|' and MAZE[POS[1] + 1][POS[0]] != '-':
+    if POS[1] + 1 < len(MAZE) - 1 and MAZE[POS[1] + 1][POS[0]] != '|' and MAZE[POS[1] + 1][POS[0]] != '-':
         newPos.append((POS[0], POS[1] + 1))
-    if POS[1] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|' and MAZE[POS[1]][POS[0] - 1] != '-':
+    if POS[0] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|' and MAZE[POS[1]][POS[0] - 1] != '-':
         newPos.append((POS[0] - 1, POS[1]))
-    if POS[1] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|' and MAZE[POS[1]][POS[0] + 1] != '-':
+    if POS[0] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|' and MAZE[POS[1]][POS[0] + 1] != '-':
         newPos.append((POS[0] + 1, POS[1]))
     return newPos
 
