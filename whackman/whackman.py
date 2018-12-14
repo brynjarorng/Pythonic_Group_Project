@@ -1,11 +1,12 @@
 import pygame as pg
-import logic
-import AI
-from graphAPI import GraphAPI
+from logic import *
+from AI import *
+#from draw import drawGame
 from sprites.Player import Player
 from sprites.Ghost import Ghost 
 
 FPS = 100
+SCALE = 2
 
 def readBoard():
     with open('whackman/maze.txt') as f:
@@ -16,66 +17,52 @@ def readBoard():
 
 # The board
 MAZE = []
+PLAYERS = ['P', 'p']
+GHOSTS = ['A', 'B', 'C', 'D']
 readBoard()
 
 # Gameboard attributes
-SCALE = 2
 TILE = 10 * SCALE
 WINDOWWIDTH = len(MAZE[0]) * TILE
 WINDOWHEIGHT = len(MAZE) * TILE
 
-# Object attributes
-COINRADIUS = int(TILE/10)
-BIGCOINRADIUS = int(TILE/3)
-ENTITYRADIUS = int(TILE/2)-2
-
-# Sprite attributes
-POS = (1, 1)
 # Directions
 UP = (0, -1)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
+# Object attributes
+COINRADIUS = int(TILE/10)
+BIGCOINRADIUS = int(TILE/3)
+ENTITYRADIUS = int(TILE/2)-1
+
 # Colors
 BLACK = (0,0,0)
 GREY = (125, 125, 125)
 GOLD = (255,223,0)
-
-WHITE = (255, 255, 255)
-SILVER = (150, 150, 150)
-
-YELLOW = (255, 255, 0)
-RED = (200, 50, 20)
-GREEN = (0, 255, 0)
 BLUE = (0, 25, 175)
+ENTITYCOLORS = {
+    "P": (255, 255, 255),
+    "p": (150, 150, 150),
 
+    "A": (255, 255, 0),
+    "B": (200, 50, 20),
+    "C": (0, 255, 0),
+    "D": (0, 25, 175)
+}
 
-'''
-mazeGraph = GraphAPI()
-def buildGraph(MAZE):
-    for y,line in enumerate(MAZE):
-        for x,unit in enumerate(line):
-            if unit != '|':
-                connectedPoints = []
-                # above
-                if logic.validateMove(MAZE, (x,y), (-1, 0)):
-                    connectedPoints.append((x - 1, y))
-                # right
-                if logic.validateMove(MAZE, (x,y)
-                
-                , (0, 1)):
-                    connectedPoints.append((x, y + 1))
-                # below
-                if logic.validateMove(MAZE, (x,y), (1, 0)):
-                    connectedPoints.append((x + 1, y))
-                # left
-                if logic.validateMove(MAZE, (x,y), (0, -1)):
-                    connectedPoints.append((x, y - 1))
-                mazeGraph.add((x,y), connectedPoints)
-'''
+def checkIfDead(player, ghosts, MAZE):
+    for ghost in ghosts:
+        if player.pos == ghost.pos:
+            # dec. live counter and hide the player
+            player.lives -= 1
+            player.diedThisGame = True
+            MAZE[player.pos[1]][player.pos[0]] = '_'
+            player.pos = (-1, -1)
+            return
 
-def drawGame():
+def drawGame(SCREEN, TILE, MAZE):
     for y, l in enumerate(MAZE):
         for x, c in enumerate(l):
             # Walls
@@ -92,14 +79,30 @@ def drawGame():
             elif c == '1':
                 pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRADIUS)
+            
+            elif c.isalpha() and c in ENTITYCOLORS:
+                if c.lower() == 'p':
+                    pg.draw.circle(SCREEN, ENTITYCOLORS[c], (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), ENTITYRADIUS)
+                    for i, player in enumerate(PLAYERS):
+                        if player.char == c:
+                            PLAYERS[i].pos = (x, y)
+                else:
+                    pg.draw.rect(SCREEN, ENTITYCOLORS[c], (x * TILE, y * TILE, TILE-1, TILE-1))
+                    ENTITYCOLORS[c]
+                    for i, ghost in enumerate(GHOSTS):
+                        if ghost.char == c:
+                            #print(c, ghost.char)
+                            GHOSTS[i].pos = (x, y)
+
+            """
             # Player 1
             elif c == 'P':
                 pg.draw.circle(SCREEN, WHITE, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), ENTITYRADIUS)
-                PLAYER1.pos = (x, y)
+                PLAYERS[0].pos = (x, y)
             # Player 2
             elif c == 'p':
                 pg.draw.circle(SCREEN, SILVER, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), ENTITYRADIUS)
-                PLAYER2.pos = (x, y)
+                PLAYERS[1].pos = (x, y)
             # Ghost A
             elif c == 'A':
                 pg.draw.rect(SCREEN, YELLOW, (x * TILE, y * TILE, TILE-1, TILE-1))
@@ -116,30 +119,16 @@ def drawGame():
             elif c == 'D':
                 pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE-1, TILE-1))
                 GHOSTD.pos = (x, y)
-    
-def checkIfDead(player, ghosts, MAZE):
-    for ghost in ghosts:
-        if player.pos == ghost.pos:
-            # dec. live counter and hide the player
-            player.lives -= 1
-            player.diedThisGame = True
-            MAZE[player.pos[1]][player.pos[0]] = 'N'
-            player.pos = (-1, -1)
-            return
-
+            """
 def main():
     pg.init()
-    global SCREEN
-    global PLAYER1, PLAYER2
-    global GHOSTA, GHOSTB, GHOSTC, GHOSTD
+    global PLAYERS, GHOSTS
 
     # Initializing entities
-    PLAYER1 = Player('', 'P', '_', (0, 0), (0, 0), 20, 0)
-    PLAYER2 = Player('', 'p', '_', (0, 0), (0, 0), 20, 0)
-    GHOSTA = Ghost('', 'A', '_', (0, 0), (0, 0), 10, 0)
-    GHOSTB = Ghost('', 'B', '_', (0, 0), (0, 0), 10, 0)
-    GHOSTC = Ghost('', 'C', '_', (0, 0), (0, 0), 10, 0)
-    GHOSTD = Ghost('', 'D', '_', (0, 0), (0, 0), 10, 0)
+    PLAYERS = [Player('', char, '_', (0, 0), (0, 0), 0, 10) for char in PLAYERS]
+    GHOSTS = [Ghost('', char, '_', (0, 0), (0, 0), 0, 10, 'R') for char in GHOSTS]
+    for i, player in enumerate(PLAYERS):
+        GHOSTS[i].chasing = player.char
 
     # Used to regulate entity speeds
     maxSpeed = 100
@@ -148,7 +137,7 @@ def main():
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
     while 1:
-        drawGame()
+        drawGame(SCREEN, TILE, MAZE)
         
         pg.event.pump()
         keyinput = pg.key.get_pressed()
@@ -159,64 +148,58 @@ def main():
 
         # Set next direction on key press
         if keyinput[pg.K_LEFT]:
-            PLAYER1.nextDir = LEFT
+            PLAYERS[0].nextDir = LEFT
         elif keyinput[pg.K_RIGHT]:
-            PLAYER1.nextDir = RIGHT
+            PLAYERS[0].nextDir = RIGHT
         elif keyinput[pg.K_UP]:
-            PLAYER1.nextDir = UP
+            PLAYERS[0].nextDir = UP
         elif keyinput[pg.K_DOWN]:
-            PLAYER1.nextDir = DOWN
+            PLAYERS[0].nextDir = DOWN
 
         if keyinput[pg.K_a]:
-            PLAYER2.nextDir = LEFT
+            PLAYERS[1].nextDir = LEFT
         elif keyinput[pg.K_d]:
-            PLAYER2.nextDir = RIGHT
+            PLAYERS[1].nextDir = RIGHT
         elif keyinput[pg.K_w]:
-            PLAYER2.nextDir = UP
+            PLAYERS[1].nextDir = UP
         elif keyinput[pg.K_s]:
-            PLAYER2.nextDir = DOWN
+            PLAYERS[1].nextDir = DOWN
 
         # Check if next direction is valid
-        for player in [PLAYER1, PLAYER2]:
-            if logic.validateNextDir(MAZE, player):
+        for player in PLAYERS:
+            if validateNextDir(MAZE, player):
                 player.moveDir = player.nextDir
         
         # move the players
-        for player in [PLAYER1, PLAYER2]:
+        for player in PLAYERS:
             if player.moveCount > maxSpeed:
-                player = logic.movePlayer(MAZE, player)
-                player = logic.updateScore(player)
+                player = movePlayer(MAZE, player)
+                player = updateScore(player)
                 player.moveCount = 0    #Reset moveCounter(speed control)
             else:
                 player.moveCount += player.speed
 
         # move the ghosts
-        for i, ghost in enumerate([GHOSTA, GHOSTB, GHOSTC, GHOSTD]):
+        for ghost in GHOSTS:
             if ghost.moveCount > maxSpeed:
                 if not ghost.path:
-                    if i < 2:
-                        ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
-                    elif i is 2:
-                        if PLAYER1.diedThisGame:
-                            ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
-                        else:
-                            ghost.path = AI.distShortPath(ghost.pos, PLAYER1.pos, MAZE, 10)
-                    elif i is 3:
-                        if PLAYER2.diedThisGame:
-                            ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
-                        else:
-                            ghost.path = AI.distShortPath(ghost.pos, PLAYER1.pos, MAZE, 10)
-                nextPos = ghost.path.pop()
+                    if ghost.chasing == 'R':
+                        ghost.path = randomPath(ghost.pos, MAZE, 10)
+                    else:
+                        playerToChase = next(x for x in PLAYERS if x.char == ghost.chasing)
+                        ghost.path = distShortPath(ghost.pos, playerToChase.pos, MAZE, 10)
+                        
+                nextPos = ghost.path.pop()        
                 ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
-                ghost = logic.moveGhost(MAZE, ghost)
+                ghost = moveGhost(MAZE, ghost)
                 ghost.moveCount = 0
             else:
                 ghost.moveCount += ghost.speed
-
+        
         # check if player should be dead
-        for player in [PLAYER1, PLAYER2]:
+        for player in PLAYERS:
             if not player.diedThisGame:
-                checkIfDead(player, [GHOSTA, GHOSTB, GHOSTC, GHOSTD], MAZE)
+                checkIfDead(player, GHOSTS, MAZE)
         
         pg.display.flip()
         FPSCLOCK.tick(FPS)
