@@ -1,9 +1,10 @@
 import pygame, sys
 from pygame.locals import *
 from pathlib import Path
+import random
 
 SCALE = 2
-FPS = 300 * SCALE
+FPS = 200 * SCALE
 
 WINWIDTH = 400 * SCALE
 WINHEIGHT = 300 * SCALE
@@ -80,13 +81,36 @@ def resetObjects(ball, paddle1, paddle2):
     return ball, paddle1, paddle2
 
 def checkHitBall(ball, paddle1, paddle2, ballDirX):
+    # right paddle
     if ballDirX == 1 and paddle1.left == ball.right and paddle1.top < ball.bottom and paddle1.bottom > ball.top:
-        HITSOUND.play()
-        return -1
+        HITSOUND.play() 
+        return (-1, [-1, 1][random.randint(0,1)])
+        # REMOVE?
+        # check top third
+        if paddle1.top <= ball.centery < paddle1.top + (paddle1.bottom-paddle1.top)*(1/4):
+            return (-1, 1)
+        # check bottom third
+        elif paddle1.bottom - (paddle1.bottom-paddle1.top)*(1/4) <= ball.centery < paddle1.bottom:
+            return (-1 , -1)
+        # else middle
+        else:
+            return (-1, 0)
+            
+    # left paddle
     elif ballDirX == -1 and paddle2.right == ball.left and paddle2.top < ball.bottom and paddle2.bottom > ball.top:
         HITSOUND.play()
-        return -1
-    return 1
+        return (-1, [-1, 1][random.randint(0,1)])
+        # REMOVE?
+        # check top third
+        if paddle2.top <= ball.centery < paddle2.top + (paddle2.bottom-paddle2.top)*(1/4):
+            return (-1, 1)
+        # check bottom third
+        elif paddle2.bottom - (paddle2.bottom-paddle2.top)*(1/4) <= ball.centery < paddle2.bottom:
+            return (-1 , -1)
+        # else middle
+        else:
+            return (-1, 0)
+    return (1, 1)
         
 def main():
     pygame.init()
@@ -99,7 +123,7 @@ def main():
     #Load Audio
     pygame.mixer.pre_init(44100, 16, 2, 4096)
     p = Path('./')
-    p = p / 'pong' / '4359__noisecollector__pongblipf4.wav'
+    p = p / 'randomPong' / '4359__noisecollector__pongblipf4.wav'
     HITSOUND = pygame.mixer.Sound(str(p.absolute()))
 
     #Setting up fonts for the score
@@ -129,16 +153,22 @@ def main():
 
         pygame.display.update()
 
+        # wait if either player scored
         if SCORESTATUS:
             pygame.time.wait(500)
             SCORESTATUS = False
 
+        keys = pygame.key.get_pressed()
+
+        # two ways to quit the game, escape or press the X
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
                 sys.exit()
-
-        keys = pygame.key.get_pressed()
+        if keys[K_ESCAPE]:
+            quit()
+            sys.exit()
+        
         if keys[K_UP]:
             paddle1.y -= 1
         elif keys[K_DOWN]:
@@ -150,7 +180,9 @@ def main():
         
         ball = moveBall(ball, ballDirX, ballDirY)
         ballDirY *= checkEdgeTB(ball, ballDirY)
-        ballDirX *= checkHitBall(ball, paddle1, paddle2, ballDirX)
+        tmpX, tmpY = checkHitBall(ball, paddle1, paddle2, ballDirX) 
+        ballDirX *= tmpX
+        ballDirY *= tmpY
         ball, ballDirX, score1, score2 = checkEdgeLR(ball, ballDirX, score1, score2)
         
         if SCORESTATUS:

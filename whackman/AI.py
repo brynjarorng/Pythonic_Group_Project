@@ -1,5 +1,5 @@
 import pygame as pg
-import sprites.BaseCharacter as BC
+import sprites.Entity as BC
 import random
 from graphAPI import GraphAPI
 import math
@@ -8,37 +8,32 @@ import math
 def randomPath(POS, MAZE, pathLength):
     currPath = POS
     selectedPath = [POS]
-    movementDir = []
     for i in range(pathLength):
         availPaths = availablePaths(currPath, MAZE)
-        # select path
         oldPath = selectedPath[len(selectedPath) - 2]
         if oldPath in availPaths and len(availPaths) > 1:
             availPaths.remove(oldPath)
         currPath = availPaths[random.randint(0, len(availPaths) - 1)]
-        movementDir.append((currPath[0] - selectedPath[-1][0], currPath[1] - selectedPath[-1][1]))
         selectedPath.append(currPath)
-
-    return movementDir[::-1]
+    return selectedPath[::-1][:-1]
 
 def availablePaths(POS, MAZE):
     newPos = []
-    if POS[0] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|':
+    if POS[0] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|' and MAZE[POS[1] - 1][POS[0]] != '-':
         newPos.append((POS[0], POS[1] - 1))
-    if POS[0] + 1 < len(MAZE) and MAZE[POS[1] + 1][POS[0]] != '|':
+    if POS[0] + 1 < len(MAZE) and MAZE[POS[1] + 1][POS[0]] != '|' and MAZE[POS[1] + 1][POS[0]] != '-':
         newPos.append((POS[0], POS[1] + 1))
-    if POS[1] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|':
+    if POS[1] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|' and MAZE[POS[1]][POS[0] - 1] != '-':
         newPos.append((POS[0] - 1, POS[1]))
-    if POS[1] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|':
+    if POS[1] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|' and MAZE[POS[1]][POS[0] + 1] != '-':
         newPos.append((POS[0] + 1, POS[1]))
     return newPos
 
 # distance based shortest path
-def distShortPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
+def distShortPath(ghostPOS, playerPOS, MAZE, pathLength):
     currPath = ghostPOS
     selectedPath = [ghostPOS]
     dist = 0.0
-    movementDir = []
     
     for i in range(pathLength):
         short = 99999999999999999999999999.0
@@ -53,15 +48,6 @@ def distShortPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
                 short = dist
                 currPath = p
 
-        movementDir.append((currPath[0] - selectedPath[-1][0], currPath[1] - selectedPath[-1][1]))
         selectedPath.append(currPath)
 
-    return movementDir[::-1]
-
-
-
-
-# find shortest path to player
-# to-do
-def shortestPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
-    return graph.BFS(ghostPOS, playerPOS, graph)#[0:pathLength]
+    return selectedPath[::-1][:-1]

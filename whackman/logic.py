@@ -1,24 +1,43 @@
 import whackman as w
 
-def validateMove(MAZE, POS, nextDir):
-    newPOS = (POS[0] + nextDir[0], POS[1] + nextDir[1])
-    # return false if pos is not inside the array
-    if 0 <= newPOS[0] < len(MAZE[0]) and 0 <= newPOS[1] < len(MAZE):
-        return MAZE[newPOS[1]][newPOS[0]] != '|' 
-    return False
+def calcNewPos(pos, direction):
+    newPos = (pos[0] + direction[0], pos[1] + direction[1])
+    if newPos == (28, 14):
+        newPos = (0, 14)
+    return newPos
 
-def makeMove(MAZE, POS, moveDir):
-    newPOS = (POS[0] + moveDir[0], POS[1] + moveDir[1])
-    if MAZE[newPOS[1]][newPOS[0]] != '|':
-        MAZE[POS[1]][POS[0]] = 'N'
-        MAZE[newPOS[1]][newPOS[0]] = 'P'
-        return newPOS
-    return POS
+def validateNextDir(maze, player):
+    newPos = calcNewPos(player.pos, player.nextDir)
+    return maze[newPos[1]][newPos[0]] != '|' 
 
-def makeMoveGHOST(MAZE, POS, moveDir):
-    newPOS = (POS[0] + moveDir[0], POS[1] + moveDir[1])
-    if MAZE[newPOS[1]][newPOS[0]] != '|':
-        MAZE[POS[1]][POS[0]] = 'N'
-        MAZE[newPOS[1]][newPOS[0]] = 'A'
-        return newPOS
-    return POS
+def movePlayer(maze, player):
+    newPos = calcNewPos(player.pos, player.moveDir)
+    beneath = maze[newPos[1]][newPos[0]] 
+    if beneath == '|':
+        return player
+        
+    player.beneath = beneath
+    maze[player.pos[1]][player.pos[0]] = '_'
+    maze[newPos[1]][newPos[0]] = player.char
+    player.pos = newPos
+    return player
+
+def updateScore(player):
+    if player.beneath == '0':
+        player.points += 10
+    elif player.beneath == '1':
+        player.points += 100
+    return player 
+
+def moveGhost(maze, ghost):
+    newPos = calcNewPos(ghost.pos, ghost.moveDir)
+    beneath = maze[newPos[1]][newPos[0]] 
+    
+    maze[ghost.pos[1]][ghost.pos[0]] = ghost.beneath
+    
+    if not beneath.isalpha():
+        ghost.beneath = beneath
+
+    maze[newPos[1]][newPos[0]] = ghost.char
+    ghost.pos = newPos
+    return ghost
