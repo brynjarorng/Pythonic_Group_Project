@@ -1,4 +1,8 @@
-import whackman as w
+#from whackman import MAZE, PLAYERS, GHOSTS, PLAYER1
+
+def validateNextDir(maze, player):
+    newPos = calcNewPos(player.pos, player.nextDir, maze)
+    return maze[newPos[1]][newPos[0]] != '|'
 
 def calcNewPos(pos, direction, maze):
     newPos = (pos[0] + direction[0], pos[1] + direction[1])
@@ -8,17 +12,12 @@ def calcNewPos(pos, direction, maze):
         newPos = (0, pos[1])
     elif newPos[0] < 0:
         newPos = (len(maze[0]) - 1, pos[1])
-    
     # y
     if newPos[1] >= len(maze):
         newPos = (pos[0], 0)
     elif newPos[1] < 0:
         newPos = (pos[0], len(maze[1]) - 1)
     return newPos
-
-def validateNextDir(maze, player):
-    newPos = calcNewPos(player.pos, player.nextDir, maze)
-    return maze[newPos[1]][newPos[0]] != '|' 
 
 def movePlayer(maze, player):
     newPos = calcNewPos(player.pos, player.moveDir, maze)
