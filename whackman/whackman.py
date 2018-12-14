@@ -7,14 +7,22 @@ from sprites.Ghost import Ghost
 
 FPS = 100
 
+def readBoard():
+    with open('whackman/maze.txt') as f:
+        for i, l in enumerate(f):
+            MAZE.append([])
+            for c in l.strip():
+                MAZE[i].append(c)
+
 # The board
-MAZE = [0] * 31
+MAZE = []
+readBoard()
 
 # Gameboard attributes
 SCALE = 2
 TILE = 10 * SCALE
-WINDOWWIDTH = 28 * TILE
-WINDOWHEIGHT = 31 * TILE
+WINDOWWIDTH = len(MAZE[0]) * TILE
+WINDOWHEIGHT = len(MAZE) * TILE
 
 # Object attributes
 COINRADIUS = int(TILE/10)
@@ -43,12 +51,7 @@ RED = (200, 50, 20)
 GREEN = (0, 255, 0)
 BLUE = (0, 25, 175)
 
-def readBoard():
-    with open('whackman/maze.txt') as f:
-        for i, l in enumerate(f):
-            MAZE[i] = []
-            for c in l.strip():
-                MAZE[i].append(c)
+
 '''
 mazeGraph = GraphAPI()
 def buildGraph(MAZE):
@@ -80,7 +83,7 @@ def drawGame():
             if c == '|':
                 pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE-1, TILE-1), 4)
             # Empty tile
-            elif c == '_':
+            elif c == '_' or c == '-':
                 pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
             # Coin
             elif c == '0':
@@ -135,8 +138,6 @@ def main():
     FPSCLOCK = pg.time.Clock()
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
-    readBoard()
-
     while 1:
         drawGame()
         
@@ -180,10 +181,15 @@ def main():
             else:
                 player.moveCount += player.speed
 
-        for ghost in [GHOSTA, GHOSTB, GHOSTC, GHOSTD]:
+        for i, ghost in enumerate([GHOSTA, GHOSTB, GHOSTC, GHOSTD]):
             if ghost.moveCount > maxSpeed:
                 if not ghost.path:
-                    ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
+                    if i < 2:
+                        ghost.path = AI.randomPath(ghost.pos, MAZE, 10)
+                    elif i is 2:
+                        ghost.path = AI.distShortPath(ghost.pos, PLAYER1.pos, MAZE, 10)
+                    elif i is 3:
+                        ghost.path = AI.distShortPath(ghost.pos, PLAYER2.pos, MAZE, 10)
                 nextPos = ghost.path.pop()
                 ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
                 ghost = logic.moveGhost(MAZE, ghost)

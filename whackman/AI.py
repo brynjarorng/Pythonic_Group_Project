@@ -19,18 +19,18 @@ def randomPath(POS, MAZE, pathLength):
 
 def availablePaths(POS, MAZE):
     newPos = []
-    if POS[0] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|':
+    if POS[0] - 1 >= 0 and MAZE[POS[1] - 1][POS[0]] != '|' and MAZE[POS[1] - 1][POS[0]] != '-':
         newPos.append((POS[0], POS[1] - 1))
-    if POS[0] + 1 < len(MAZE) and MAZE[POS[1] + 1][POS[0]] != '|':
+    if POS[0] + 1 < len(MAZE) and MAZE[POS[1] + 1][POS[0]] != '|' and MAZE[POS[1] + 1][POS[0]] != '-':
         newPos.append((POS[0], POS[1] + 1))
-    if POS[1] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|':
+    if POS[1] - 1 >= 0 and MAZE[POS[1]][POS[0] - 1] != '|' and MAZE[POS[1]][POS[0] - 1] != '-':
         newPos.append((POS[0] - 1, POS[1]))
-    if POS[1] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|':
+    if POS[1] + 1 < len(MAZE[0]) and MAZE[POS[1]][POS[0] + 1] != '|' and MAZE[POS[1]][POS[0] + 1] != '-':
         newPos.append((POS[0] + 1, POS[1]))
     return newPos
 
 # distance based shortest path
-def distShortPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
+def distShortPath(ghostPOS, playerPOS, MAZE, pathLength):
     currPath = ghostPOS
     selectedPath = [ghostPOS]
     dist = 0.0
@@ -50,7 +50,7 @@ def distShortPath(ghostPOS, playerPOS, MAZE, graph, pathLength):
 
         selectedPath.append(currPath)
 
-    return selectedPath[::-1]
+    return selectedPath[::-1][:-1]
 
 # teleporting ghost
 def tpGhost():
