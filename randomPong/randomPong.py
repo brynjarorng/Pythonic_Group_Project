@@ -1,6 +1,7 @@
 import pygame, sys
 from pygame.locals import *
 from pathlib import Path
+import random
 
 SCALE = 2
 FPS = 200 * SCALE
@@ -83,12 +84,14 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
     # right paddle
     if ballDirX == 1 and paddle1.left == ball.right and paddle1.top < ball.bottom and paddle1.bottom > ball.top:
         HITSOUND.play() 
+        return (-1, [-1, 1][random.randint(0,1)])
+        # REMOVE?
         # check top third
-        if paddle1.top - (paddle1.top-paddle1.bottom)*(1/3) <= ball.centery < paddle1.top:
-            return (-1, 0)
+        if paddle1.top <= ball.centery < paddle1.top + (paddle1.bottom-paddle1.top)*(1/4):
+            return (-1, 1)
         # check bottom third
-        elif paddle1.bottom <= ball.centery < paddle1.bottom + (paddle1.top-paddle1.bottom)*(1/3):
-            return (-1 , 0)
+        elif paddle1.bottom - (paddle1.bottom-paddle1.top)*(1/4) <= ball.centery < paddle1.bottom:
+            return (-1 , -1)
         # else middle
         else:
             return (-1, 0)
@@ -96,8 +99,18 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
     # left paddle
     elif ballDirX == -1 and paddle2.right == ball.left and paddle2.top < ball.bottom and paddle2.bottom > ball.top:
         HITSOUND.play()
-        return -1
-    return 1
+        return (-1, [-1, 1][random.randint(0,1)])
+        # REMOVE?
+        # check top third
+        if paddle2.top <= ball.centery < paddle2.top + (paddle2.bottom-paddle2.top)*(1/4):
+            return (-1, 1)
+        # check bottom third
+        elif paddle2.bottom - (paddle2.bottom-paddle2.top)*(1/4) <= ball.centery < paddle2.bottom:
+            return (-1 , -1)
+        # else middle
+        else:
+            return (-1, 0)
+    return (1, 1)
         
 def main():
     pygame.init()
@@ -167,7 +180,9 @@ def main():
         
         ball = moveBall(ball, ballDirX, ballDirY)
         ballDirY *= checkEdgeTB(ball, ballDirY)
-        ballDirX *= checkHitBall(ball, paddle1, paddle2, ballDirX)
+        tmpX, tmpY = checkHitBall(ball, paddle1, paddle2, ballDirX) 
+        ballDirX *= tmpX
+        ballDirY *= tmpY
         ball, ballDirX, score1, score2 = checkEdgeLR(ball, ballDirX, score1, score2)
         
         if SCORESTATUS:
