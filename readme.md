@@ -29,6 +29,7 @@ Next you need to clone the repo. Open a terminal and manouver into the appropria
 
 Now that everything is setup, using the terminal, navigate into *Pythonic_Group_Project* and run this command to play the game:
 * `python ./menu.py`
+
 If python 3 hasen't been added to path you need to run the folowing:
 * `python3 ./menu.py`
 
