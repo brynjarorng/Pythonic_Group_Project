@@ -261,7 +261,7 @@ def play():
             ret = gm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
             # Restart game
             if ret == 2:
-                maze = initBoard(maze)
+                maze = initBoard()
                 players, ghosts = initEntities()
                 countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
             # Quit
