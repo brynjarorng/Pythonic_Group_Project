@@ -45,6 +45,7 @@ while 1:
     gameDisplay.blit(WhackmanSurf, whackman)
     gameDisplay.blit(QuitGameSurf, quitGame)
 
+
     keyinput = pg.key.get_pressed()
     if keyinput[pg.K_ESCAPE]:
         pg.quit()
@@ -89,6 +90,7 @@ while 1:
                 elif menuState == 3:
                     pg.quit()
                     quit()
+    pg.event.clear()
     
 
     pg.display.update()

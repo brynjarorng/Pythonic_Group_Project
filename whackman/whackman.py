@@ -4,6 +4,7 @@ from whackman.AI import *
 from whackman.data.entities.Player import Player
 from whackman.data.entities.Ghost import Ghost 
 import whackman.whackmanMenu as wm
+import gameMenu as gm
 import os, sys
 from pathlib import Path
 
@@ -135,7 +136,7 @@ def play():
         keyinput = pg.key.get_pressed()
 
         if keyinput[pg.K_ESCAPE]:
-            ret = wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
+            ret = gm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
             if ret == 2:
                 print('t')
                 maze = initBoard(maze)
