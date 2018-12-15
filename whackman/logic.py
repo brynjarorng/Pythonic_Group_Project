@@ -47,7 +47,7 @@ def checkIfDead(maze, entity, enemies):
     for enemy in enemies:
         if entity.eType == 'P':
             # Player goes head on into ghost
-            if entity.pos == enemy.pos and entity.oldPos == enemy.path[-1]:
+            if entity.pos == enemy.pos and enemy.path and entity.oldPos == enemy.path[-1]:
                 entity.lives -= 1
                 entity.diedThisGame = True
                 entity.pos = (0, 0)
