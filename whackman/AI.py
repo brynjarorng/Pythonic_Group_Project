@@ -1,7 +1,6 @@
 import pygame as pg
-import sprites.Entity as BC
+import data.entities.Entity as BC
 import random
-from graphAPI import GraphAPI
 import math
 
 # 'random' path 

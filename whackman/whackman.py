@@ -1,15 +1,20 @@
 import pygame as pg
 from logic import *
 from AI import *
-from sprites.Player import Player
-from sprites.Ghost import Ghost 
+from data.entities.Player import Player
+from data.entities.Ghost import Ghost 
 import whackmanMenu as wm
+import os, sys
+from pathlib import Path
 
 FPS = 100
 SCALE = 2
 
+# get path of file and use that as the base path
+mazePath = Path(sys.argv[0]).parent / 'maze.txt'
+
 def readBoard():
-    with open('whackman/maze.txt') as f:
+    with open(mazePath) as f:
         for i, l in enumerate(f):
             MAZE.append([])
             for c in l.strip():

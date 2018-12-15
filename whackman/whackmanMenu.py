@@ -1,5 +1,7 @@
 import pygame as pg
 import pygame.gfxdraw
+from pathlib import Path
+import sys
 
 def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
     FPSCLOCK = pg.time.Clock()
@@ -51,7 +53,7 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
         restartTextSurf, restartText = text_objects("RESTART", largeText)
         restartText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
 
-        quitTextSurf, quitText = text_objects("QUIT", largeText)
+        quitTextSurf, quitText = text_objects("EXIT TO MENU", largeText)
         quitText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
 
         # blit text to surface
@@ -106,8 +108,14 @@ def text_objects(text, font):
 
 
 def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
-    largeText = pg.font.Font('whackman\sprites\minotaur.ttf', 35)
-    heart = pg.image.load('whackman\sprites\img\heart.png')
+    # find the base path of the project and execute from there
+    basePath = Path(sys.argv[0]).parent
+    fontLoc = basePath / "data" / "fonts" / "minotaur.ttf"
+    heartLoc = basePath / "data" / "sprites" / "heart.png"
+
+    print(fontLoc)
+    largeText = pg.font.Font(str(fontLoc), 35)
+    heart = pg.image.load(str(heartLoc))
 
     # center division line
     devLine = pg.Rect(0, 0, 3, BOTTOMOFFSET - 1)
