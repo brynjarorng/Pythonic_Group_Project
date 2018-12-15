@@ -1,9 +1,9 @@
 import pygame as pg
-from logic import *
-from AI import *
-from data.entities.Player import Player
-from data.entities.Ghost import Ghost 
-import whackmanMenu as wm
+from whackman.logic import *
+from whackman.AI import *
+from whackman.data.entities.Player import Player
+from whackman.data.entities.Ghost import Ghost 
+import whackman.whackmanMenu as wm
 import os, sys
 from pathlib import Path
 
@@ -11,7 +11,7 @@ FPS = 100
 SCALE = 2
 
 # get path of file and use that as the base path
-mazePath = Path(sys.argv[0]).parent / 'maze.txt'
+mazePath = Path(sys.argv[0]).parent / "whackman" / 'maze.txt'
 
 def readBoard():
     with open(mazePath) as f:
@@ -99,7 +99,6 @@ def drawGame(SCREEN, TILE, MAZE):
                     ENTITYCOLORS[c]
                     for i, ghost in enumerate(GHOSTS):
                         if ghost.char == c:
-                            #print(c, ghost.char)
                             GHOSTS[i].pos = (x, y)
 
 def main():
@@ -189,4 +188,7 @@ def main():
         FPSCLOCK.tick(FPS)
 
 if __name__ == '__main__':
+    main()
+
+def play():
     main()

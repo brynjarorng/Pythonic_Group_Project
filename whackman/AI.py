@@ -1,5 +1,5 @@
 import pygame as pg
-import data.entities.Entity as BC
+import whackman.data.entities.Entity as BC
 import random
 import math
 

@@ -1,7 +1,8 @@
 import pygame as pg
 import pygame.gfxdraw
-import snake.snake as snake
-#import whackman.whackman.py as whackman
+import snake.snake as snakeGame
+import randomPong.randomPong as pongGame
+import whackman.whackman as whackmanGame
 
 pg.init()
 clock = pg.time.Clock()
@@ -10,51 +11,95 @@ width = 800
 
 def text_objects(text, font):
     textSurface = font.render(text, True, (0,0,0))
-    return textSurface, textSurface.get_rect()    
+    return textSurface, textSurface.get_rect() 
 
-# 0 - Play game
-# 1 - Quit game
+largeText = pg.font.Font('freesansbold.ttf',80)
+
+# menu text elements
+SnakeSurf, snake = text_objects("Play Snake", largeText)
+PongSurf, pong = text_objects("Play Pong", largeText)
+WhackmanSurf, whackman = text_objects("Play Whackman", largeText)
+QuitGameSurf, quitGame = text_objects("Quit", largeText)
+selectBar = pg.Rect(0, 0, 800, 100)
+
+# 0 - play snake
+# 1 - play pong
+# 2 - play whackman
+# 3 - quit
 menuState = 0
+nextState = -1
+select = 0
+selectMax = 12
+
 while 1:
     gameDisplay = pg.display.set_mode((height,width))
+
     # UI elements
     gameDisplay.fill((255,255,255))
-    largeText = pg.font.Font('freesansbold.ttf',115)
-    # menu text elements
-    PlayGameSurf, playGame = text_objects("Play Game", largeText)
-    QuitGameSurf, quitGame = text_objects("Quit", largeText)
-    playGame.center = ((height/2),(width/2) - 100)
+
+    snake.center = ((height/2),(width/2) - 200)
+    pong.center = ((height/2),(width/2) - 100)
+    whackman.center = ((height/2),(width/2))
     quitGame.center = ((height/2),(width/2) + 100)
+
     # add elements to drawing surface
-    gameDisplay.blit(PlayGameSurf, playGame)
+    gameDisplay.blit(SnakeSurf, snake)
+    gameDisplay.blit(PongSurf, pong)
+    gameDisplay.blit(WhackmanSurf, whackman)
     gameDisplay.blit(QuitGameSurf, quitGame)
 
     keyinput = pg.key.get_pressed()
     if keyinput[pg.K_ESCAPE]:
         pg.quit()
         quit()
-    # hover play game
-    selectBar = pg.Rect(0, 0, 800, 130)
-    if menuState == 0:
-        selectBar.center = ((height/2),(width/2) - 100)
-        # if hover should be changed to selector below
-        if keyinput[pg.K_DOWN]:
-            menuState = 1
-    # hover quit
-    elif menuState == 1:
-        selectBar.center = ((height/2),(width/2) + 100)
-        # if hover should be changed to selector above
-        if keyinput[pg.K_UP]:
-            menuState = 0
-    pg.gfxdraw.box(gameDisplay, selectBar, (100,0,0,127))
     
-    # check if to play game or quit the game
+    # hover play snake
+    if menuState == 0:
+        selectBar.center = ((height/2),(width/2) - 200)
+    # hover play pong
+    elif menuState == 1:
+        selectBar.center = ((height/2),(width/2) - 100)
+    # hover play whackman
+    elif menuState == 2:
+        selectBar.center = ((height/2),(width/2))
+    # hover quit
+    elif menuState == 3:
+        selectBar.center = ((height/2),(width/2) + 100)
+    pg.gfxdraw.box(gameDisplay, selectBar, (100,0,0,127))
+
+    # select what to hover next
+    if keyinput[pg.K_UP]:
+        nextState = 1
+    elif keyinput[pg.K_DOWN]:
+        nextState = 2
+
+    # select next menu
+    if select == selectMax:
+        select = 0
+        if nextState == 1:
+            menuState -= 1
+            nextState = -1
+            if menuState == -1:
+                menuState = 3
+        elif nextState == 2:
+            menuState += 1
+            nextState = -1
+            if menuState == 4:
+                menuState = 0
+    else:
+        select += 1
+    
+    # check if to play a game or quit the game
     if keyinput[pg.K_RETURN]:
         if menuState == 0:
-            snake.play()
+            snakeGame.play()
         elif menuState == 1:
+            pongGame.play()
+        elif menuState == 2:
+            whackmanGame.play()
+        elif menuState == 3:
             pg.quit()
             quit()
 
     pg.display.update()
-    clock.tick(30)
+    clock.tick(60)

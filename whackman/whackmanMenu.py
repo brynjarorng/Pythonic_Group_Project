@@ -110,10 +110,9 @@ def text_objects(text, font):
 def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
     # find the base path of the project and execute from there
     basePath = Path(sys.argv[0]).parent
-    fontLoc = basePath / "data" / "fonts" / "minotaur.ttf"
-    heartLoc = basePath / "data" / "sprites" / "heart.png"
+    fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
+    heartLoc = basePath / "whackman" / "data" / "sprites" / "heart.png"
 
-    print(fontLoc)
     largeText = pg.font.Font(str(fontLoc), 35)
     heart = pg.image.load(str(heartLoc))
 
