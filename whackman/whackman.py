@@ -20,6 +20,7 @@ def readBoard():
 MAZE = []
 PLAYERS = ['P', 'p']
 GHOSTS = ['A', 'B', 'C', 'D']
+GHOSTSTART = [(9,12), (19,12), (9, 18), (19,18)]
 readBoard()
 
 # Gameboard attributes
@@ -44,8 +45,8 @@ GREY = (125, 125, 125)
 GOLD = (255,223,0)
 BLUE = (0, 25, 175)
 ENTITYCOLORS = {
-    "P": (255, 255, 255),
-    "p": (150, 150, 150),
+    "1": (255, 255, 255),
+    "2": (150, 150, 150),
 
     "A": (255, 255, 0),
     "B": (200, 50, 20),
@@ -53,53 +54,30 @@ ENTITYCOLORS = {
     "D": (175, 0, 175)
 }
 
-def checkIfDead(player, ghosts, MAZE):
-    for ghost in ghosts:
-        if player.pos == ghost.pos:
-            # dec. live counter and hide the player
-            player.lives -= 1
-            player.diedThisGame = True
-            MAZE[player.pos[1]][player.pos[0]] = '_'
-            player.pos = (-1, -1)
-            return
-
-def drawGame(SCREEN, TILE, MAZE):
+def drawBoard(SCREEN, TILE, MAZE):
     pg.draw.rect(SCREEN, BLACK, (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
     for y, l in enumerate(MAZE):
         for x, c in enumerate(l):
             # Walls
             if c == '|':
                 pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE-1, TILE-1), 4)
-            # Empty tile
-            elif c == '_' or c == '-':
-                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
             # Coin
             elif c == '0':
-                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRADIUS)
             # Super food
             elif c == '1':
-                pg.draw.rect(SCREEN, BLACK, (x * TILE, y * TILE, TILE-1, TILE-1))
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRADIUS)
             
-            elif c.isalpha() and c in ENTITYCOLORS:
-                if c.lower() == 'p':
-                    pg.draw.circle(SCREEN, ENTITYCOLORS[c], (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), ENTITYRADIUS)
-                    for i, player in enumerate(PLAYERS):
-                        if player.char == c:
-                            PLAYERS[i].pos = (x, y)
-                else:
-                    pg.draw.rect(SCREEN, ENTITYCOLORS[c], (x * TILE, y * TILE, TILE-1, TILE-1))
-                    ENTITYCOLORS[c]
-                    for i, ghost in enumerate(GHOSTS):
-                        if ghost.char == c:
-                            #print(c, ghost.char)
-                            GHOSTS[i].pos = (x, y)
+def drawEntities(SCREEN, TILE, MAZE):
+    for player in PLAYERS:
+        if not player.diedThisGame:
+            pg.draw.circle(SCREEN, ENTITYCOLORS[player.char], (int((player.pos[0]) * TILE + TILE / 2), int((player.pos[1]) * TILE + TILE / 2)), ENTITYRADIUS)
+    for ghost in GHOSTS:
+        pg.draw.rect(SCREEN, ENTITYCOLORS[ghost.char], (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE), TILE-1, TILE-1))
 
 def text_objects(text, font):
     textSurface = font.render(text, True, (255,255,255))
     return textSurface, textSurface.get_rect() 
-
 
 def menu(SCREEN):
     FPSCLOCK = pg.time.Clock()
@@ -182,8 +160,9 @@ def main():
     global PLAYERS, GHOSTS
 
     # Initializing entities
-    PLAYERS = [Player('', char, '_', (0, 0), (0, 0), 0, 10) for char in PLAYERS]
-    GHOSTS = [Ghost('', char, '_', (0, 0), (0, 0), 0, 10, 'R') for char in GHOSTS]
+    PLAYERS = [Player('', '1', 'P', (15, 23), (0, 0), 0, 10),
+               Player('', '2', 'P', (13, 23), (0, 0), 0, 10)]
+    GHOSTS = [Ghost('', char, 'G', GHOSTSTART[i], (0, 0), 0, 10, 'R') for i, char in enumerate(GHOSTS)]
     for i, player in enumerate(PLAYERS):
         GHOSTS[i].chasing = player
 
@@ -194,7 +173,8 @@ def main():
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
     while 1:
-        drawGame(SCREEN, TILE, MAZE)
+        drawBoard(SCREEN, TILE, MAZE)
+        drawEntities(SCREEN, TILE, MAZE)
         
         pg.event.pump()
         keyinput = pg.key.get_pressed()
@@ -223,44 +203,27 @@ def main():
             PLAYERS[1].nextDir = UP
         elif keyinput[pg.K_s]:
             PLAYERS[1].nextDir = DOWN
-        
-        # move the players
-        for player in PLAYERS:
-            if validateNextDir(MAZE, player):   # Check if next direction is valid
-                player.moveDir = player.nextDir
-            if player.moveCount > maxSpeed:
-                player = movePlayer(MAZE, player)
-                player = updateScore(player)
-                player.moveCount = 0    #Reset moveCounter(speed control)
-            else:
-                player.moveCount += player.speed
 
-        # move the ghosts
-        for ghost in GHOSTS:
-            if ghost.moveCount > maxSpeed:
-                if not ghost.path:
-                    if ghost.chasing == 'R' or ghost.chasing.diedThisGame:
-                        ghost.path = randomPath(ghost.pos, MAZE, 10)
-                    else:
-                        playerToChase = next(x for x in PLAYERS if x.char == ghost.chasing.char)
-                        ghost.path = distShortPath(ghost.pos, playerToChase.pos, MAZE, 10)
-                    
-                nextPos = ghost.path.pop()        
-                ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
-                ghost = moveGhost(MAZE, ghost)
-                for player in PLAYERS:
-                    if player.char == ghost.beneath:
-                        player.diedThisGame = True
-                        player.live -= 1
-                ghost.moveCount = 0
+        for entity in PLAYERS + GHOSTS:
+            # Validate next direction for player
+            if entity.eType == 'P' and validateNextDir(MAZE, entity):
+                entity.moveDir = entity.nextDir
+            # Get path from AI for ghost
+            elif entity.eType == 'G' and not entity.path:
+                if entity.chasing == 'R' or entity.chasing.diedThisGame:
+                    entity.path = randomPath(entity.pos, MAZE, 10)
+                else:
+                    entity.path =  distShortPath(entity.pos, entity.chasing.pos, MAZE, 10)
+            #Move entities
+            if entity.moveCount > maxSpeed:
+                moveEntity(MAZE, entity)
+                if entity.eType == 'P':
+                    checkIfDead(MAZE, entity, GHOSTS)
+                else:
+                    checkIfDead(MAZE, entity, PLAYERS)
             else:
-                ghost.moveCount += ghost.speed
-        
-        # check if player should be dead
-        for player in PLAYERS:
-            if not player.diedThisGame:
-                checkIfDead(player, GHOSTS, MAZE)
-        
+                entity.moveCount += entity.speed
+
         pg.display.flip()
         FPSCLOCK.tick(FPS)
 
