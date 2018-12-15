@@ -45,6 +45,7 @@ while 1:
     gameDisplay.blit(WhackmanSurf, whackman)
     gameDisplay.blit(QuitGameSurf, quitGame)
 
+
     keyinput = pg.key.get_pressed()
     if keyinput[pg.K_ESCAPE]:
         pg.quit()
@@ -78,7 +79,7 @@ while 1:
             elif ev.key == pg.K_UP:
                 menuState -= 1
                 if menuState == -1:
-                    menuState = 2
+                    menuState = 3
             elif keyinput[pg.K_RETURN]:
                 if menuState == 0:
                     snakeGame.play()
@@ -89,6 +90,7 @@ while 1:
                 elif menuState == 3:
                     pg.quit()
                     quit()
+    pg.event.clear()
     
 
     pg.display.update()
