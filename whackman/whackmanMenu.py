@@ -106,18 +106,17 @@ def text_objects(text, font):
 
 
 def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
-    largeText = pg.font.Font('freesansbold.ttf', 35)
-    heart = pg.image.load('whackman\heart.png')
+    largeText = pg.font.Font('whackman\sprites\minotaur.ttf', 35)
+    heart = pg.image.load('whackman\sprites\img\heart.png')
 
     # center division line
     devLine = pg.Rect(0, 0, 3, BOTTOMOFFSET - 1)
     devLine.center = (WINDOWWIDTH / 2, WINDOWHEIGHT - BOTTOMOFFSET / 2 + 1)
     pg.gfxdraw.box(SCREEN, devLine, (255, 255, 255, 245))
 
-
     # player 1 - left
     # score
-    playerOneScoreSurf, playerOneScoreText = text_objects(str(PLAYERS[0].points), largeText)
+    playerOneScoreSurf, playerOneScoreText = text_objects('P1: ' + str(PLAYERS[0].points), largeText)
     playerOneScoreText = (10, (WINDOWHEIGHT - BOTTOMOFFSET + 5))
 
     # lives
@@ -126,10 +125,9 @@ def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
         SCREEN.blit(heart, (baseHeartPos, WINDOWHEIGHT - BOTTOMOFFSET / 2 + 10))
         baseHeartPos += 15
 
-
     # player 2 - right
     # score
-    playerTwoScoreSurf, playerTwoScoreText = text_objects(str(PLAYERS[1].points), largeText)
+    playerTwoScoreSurf, playerTwoScoreText = text_objects('P2: ' + str(PLAYERS[1].points), largeText)
     playerTwoScoreText = (WINDOWWIDTH / 2 + 10, (WINDOWHEIGHT - BOTTOMOFFSET + 5))
 
     # lives
