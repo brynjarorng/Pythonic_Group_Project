@@ -10,8 +10,9 @@ from pathlib import Path
 FPS = 100
 
 # Get path of file and use that as the base path
-def initBoard(maze):
+def initBoard():
     mazePath = Path(sys.argv[0]).parent / "whackman" / 'maze.txt'
+    maze = []
     with open(mazePath) as f:
         for i, l in enumerate(f):
             maze.append([])
@@ -96,10 +97,8 @@ def nextLevel(players, ghosts, tile):
 def play():
     pg.init()
 
-    # The board and entities
-    maze = []
-    
-    initBoard(maze)
+    # The board and entities    
+    maze = initBoard()
 
     # Gameboard attributes
     BOTTOMOFFSET = 60
@@ -124,8 +123,7 @@ def play():
 
     while playGame:
         if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
-            maze = []
-            initBoard(maze)
+            maze = initBoard()
             players, ghosts = nextLevel(players, ghosts, TILE)
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
         drawEntities(SCREEN, TILE, players, ghosts)
@@ -134,12 +132,14 @@ def play():
         pg.event.pump()
         keyinput = pg.key.get_pressed()
 
+        # Game menu
         if keyinput[pg.K_ESCAPE]:
             ret = wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
+            # Restart game
             if ret == 2:
-                print('t')
-                maze = initBoard(maze)
+                maze = initBoard()
                 players, ghosts = initEntities()
+            # Quit
             elif ret == 0:
                 return False
             pg.time.wait(400)
