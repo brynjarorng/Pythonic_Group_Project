@@ -43,7 +43,6 @@ def initEntities():
     return players, ghosts
 
 # Draw the game board and changes during game
-
 def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     # Object attributes
     BLACK = (0,0,0)
@@ -93,6 +92,110 @@ def nextLevel(players, ghosts, tile):
         ghost.speed = ghostSpeed + 2
     return players, ghosts
 
+def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts):
+    basePath = Path(sys.argv[0]).parent
+    fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
+    
+    largeText = pg.font.Font(str(fontLoc), 200)
+    smallText = pg.font.Font(str(fontLoc), 60)
+
+    pressSpaceSurf, pressSpaceText = wm.text_objects('PRESS SPACE TO START', smallText)
+    pressSpaceText.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+    
+    count3Surf, count3Text = wm.text_objects('3', largeText)
+    count3Text.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+
+    count2Surf, count2Text = wm.text_objects('2', largeText)
+    count2Text.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+
+    count1Surf, count1Text = wm.text_objects('1', largeText)
+    count1Text.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+    
+    count0Surf, count0Text = wm.text_objects('GO!', largeText)
+    count0Text.center = (WINDOWWIDTH /2 + 20, WINDOWHEIGHT / 2)
+
+    FPSCLOCK = pg.time.Clock()
+    
+    blink = True
+    while True:
+        FPSCLOCK.tick(FPS)
+        pg.event.pump()
+
+        # blinking space
+        # on
+        drawEntities(SCREEN, TILE, players, ghosts)
+        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+        drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+        SCREEN.blit(pressSpaceSurf, pressSpaceText)
+        pg.display.flip()
+        if blink:
+            for i in range(FPS * 2):
+                    pg.event.pump()
+                    FPSCLOCK.tick(FPS)
+                    keyinput = pg.key.get_pressed()
+                    if keyinput[pg.K_SPACE]:
+                        blink = False
+                        break
+                    continue
+        
+        # off
+        drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+        pg.display.flip()
+        if blink:
+            for i in range(int(FPS * (1 / 3))):
+                    pg.event.pump()
+                    FPSCLOCK.tick(FPS)
+                    keyinput = pg.key.get_pressed()
+                    if keyinput[pg.K_SPACE]:
+                        blink = False
+                        break
+                    continue
+
+        # countdown sequence
+        keyinput = pg.key.get_pressed()
+        if keyinput[pg.K_SPACE] or not blink:
+            # 3
+            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
+            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            SCREEN.blit(count3Surf, count3Text)
+            pg.display.flip()
+            for i in range(int(FPS * (2 / 3))):
+                pg.event.pump()
+                FPSCLOCK.tick(FPS)
+                continue
+            
+            # 2
+            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
+            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            SCREEN.blit(count2Surf, count2Text)
+            pg.display.flip()
+            for i in range(int(FPS * (2 / 3))):
+                pg.event.pump()
+                FPSCLOCK.tick(FPS)
+                continue
+            
+            # 1
+            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
+            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            SCREEN.blit(count1Surf, count1Text)
+            pg.display.flip()
+            for i in range(int(FPS * (2 / 3))):
+                pg.event.pump()
+                FPSCLOCK.tick(FPS)
+                continue
+            
+            # GO!
+            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
+            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            SCREEN.blit(count0Surf, count0Text)
+            pg.display.flip()
+            for i in range(int(FPS / 2)):
+                pg.event.pump()
+                FPSCLOCK.tick(FPS)
+                continue
+            return
+
+
 # Actual game play
 def play():
     pg.init()
@@ -112,6 +215,8 @@ def play():
     FPSCLOCK = pg.time.Clock()
 
     players, ghosts = initEntities()
+
+    countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
 
     # Directions
     UP = (0, -1)
@@ -138,9 +243,9 @@ def play():
         if keyinput[pg.K_ESCAPE]:
             ret = gm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
             if ret == 2:
-                print('t')
                 maze = initBoard(maze)
                 players, ghosts = initEntities()
+                countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
             elif ret == 0:
                 return False
             pg.time.wait(400)

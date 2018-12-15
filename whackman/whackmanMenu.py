@@ -3,16 +3,16 @@ import pygame.gfxdraw
 from pathlib import Path
 import sys
 
+# find the base path of the project and execute from there
+basePath = Path(sys.argv[0]).parent
+fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
+heartLoc = basePath / "whackman" / "data" / "sprites" / "heart.png"
+
 def text_objects(text, font):
     textSurface = font.render(text, True, (255,255,255))
     return textSurface, textSurface.get_rect() 
 
 def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
-    # find the base path of the project and execute from there
-    basePath = Path(sys.argv[0]).parent
-    fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
-    heartLoc = basePath / "whackman" / "data" / "sprites" / "heart.png"
-
     largeText = pg.font.Font(str(fontLoc), 35)
     heart = pg.image.load(str(heartLoc))
 
@@ -42,7 +42,6 @@ def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
     for live in range(PLAYERS[1].lives):
         SCREEN.blit(heart, (baseHeartPos, WINDOWHEIGHT - BOTTOMOFFSET / 2 + 10))
         baseHeartPos += 15
-
 
     # blit text to surface
     SCREEN.blit(playerOneScoreSurf, playerOneScoreText)
