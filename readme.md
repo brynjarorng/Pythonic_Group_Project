@@ -1,7 +1,11 @@
 # Mini Arcade
 
 Mini arcade is a project running old school games writen in python using pygame.
-Currently there are 3 games in the arcade
+Currently there are 3 games in the arcade:
+
+* Snake
+* Pong
+* Whackman
 
 ## Developers
 * Brynjar Örn Grétarsson - *brynjarog17* - [github](https://github.com/brynjarorng)
@@ -11,6 +15,26 @@ Currently there are 3 games in the arcade
 * [VS Code](https://code.visualstudio.com/Download) - Code editor
 * [Python](https://www.python.org/downloads/) - Programming language
 * [Pygame](https://www.pygame.org/wiki/GettingStarted) - Python library for games
+
+## Installationa
+The first step is to make sure that python is installed on your system, pygames recommends using version python 3.6.1 or greater. Follow the link above and choose the correct version for you OS.
+
+Next you need to install pygame, this can be done with the following command:
+* ´python3 -m pip install -U pygame --user´
+For further information, following the link provided above.
+
+Next you need to clone the repo. Open a terminal and manouver into the appropriate directory and enter the following command:
+
+* ´git clone https://github.com/brynjarorng/Pythonic_Group_Project´
+
+Now that everything is setup, using the terminal, navigate into *Pythonic_Group_Project* and run this command to play the game:
+* ´python ./menu.py´
+If python 3 hasen't been added to path you need to run the folowing:
+* ´python3 ./menu.py´
+
+
+
+
 
 ## Honorable mentions
 
