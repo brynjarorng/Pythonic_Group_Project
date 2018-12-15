@@ -50,7 +50,7 @@ ENTITYCOLORS = {
     "A": (255, 255, 0),
     "B": (200, 50, 20),
     "C": (0, 255, 0),
-    "D": (0, 25, 175)
+    "D": (175, 0, 175)
 }
 
 def checkIfDead(player, ghosts, MAZE):
@@ -95,32 +95,6 @@ def drawGame(SCREEN, TILE, MAZE):
                         if ghost.char == c:
                             #print(c, ghost.char)
                             GHOSTS[i].pos = (x, y)
-
-            
-            # Player 1
-            elif c == 'P':
-                pg.draw.circle(SCREEN, WHITE, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), ENTITYRADIUS)
-                PLAYERS[0].pos = (x, y)
-            # Player 2
-            elif c == 'p':
-                pg.draw.circle(SCREEN, SILVER, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), ENTITYRADIUS)
-                PLAYERS[1].pos = (x, y)
-            # Ghost A
-            elif c == 'A':
-                pg.draw.rect(SCREEN, YELLOW, (x * TILE, y * TILE, TILE-1, TILE-1))
-                GHOSTA.pos = (x, y)
-            # Ghost B
-            elif c == 'B':
-                pg.draw.rect(SCREEN, RED, (x * TILE, y * TILE, TILE-1, TILE-1))
-                GHOSTB.pos = (x, y)
-            # Ghost C
-            elif c == 'C':
-                pg.draw.rect(SCREEN, GREEN, (x * TILE, y * TILE, TILE-1, TILE-1))
-                GHOSTC.pos = (x, y)
-            # Ghost D
-            elif c == 'D':
-                pg.draw.rect(SCREEN, BLUE, (x * TILE, y * TILE, TILE-1, TILE-1))
-                GHOSTD.pos = (x, y)
 
 def text_objects(text, font):
     textSurface = font.render(text, True, (255,255,255))
@@ -211,7 +185,7 @@ def main():
     PLAYERS = [Player('', char, '_', (0, 0), (0, 0), 0, 10) for char in PLAYERS]
     GHOSTS = [Ghost('', char, '_', (0, 0), (0, 0), 0, 10, 'R') for char in GHOSTS]
     for i, player in enumerate(PLAYERS):
-        GHOSTS[i].chasing = player.char
+        GHOSTS[i].chasing = player
 
     # Used to regulate entity speeds
     maxSpeed = 100
@@ -249,14 +223,11 @@ def main():
             PLAYERS[1].nextDir = UP
         elif keyinput[pg.K_s]:
             PLAYERS[1].nextDir = DOWN
-
-        # Check if next direction is valid
-        for player in PLAYERS:
-            if validateNextDir(MAZE, player):
-                player.moveDir = player.nextDir
         
         # move the players
         for player in PLAYERS:
+            if validateNextDir(MAZE, player):   # Check if next direction is valid
+                player.moveDir = player.nextDir
             if player.moveCount > maxSpeed:
                 player = movePlayer(MAZE, player)
                 player = updateScore(player)
@@ -268,15 +239,19 @@ def main():
         for ghost in GHOSTS:
             if ghost.moveCount > maxSpeed:
                 if not ghost.path:
-                    if ghost.chasing == 'R':
+                    if ghost.chasing == 'R' or ghost.chasing.diedThisGame:
                         ghost.path = randomPath(ghost.pos, MAZE, 10)
                     else:
-                        playerToChase = next(x for x in PLAYERS if x.char == ghost.chasing)
+                        playerToChase = next(x for x in PLAYERS if x.char == ghost.chasing.char)
                         ghost.path = distShortPath(ghost.pos, playerToChase.pos, MAZE, 10)
-                        
+                    
                 nextPos = ghost.path.pop()        
                 ghost.moveDir = (nextPos[0] - ghost.pos[0], nextPos[1] - ghost.pos[1])
                 ghost = moveGhost(MAZE, ghost)
+                for player in PLAYERS:
+                    if player.char == ghost.beneath:
+                        player.diedThisGame = True
+                        player.live -= 1
                 ghost.moveCount = 0
             else:
                 ghost.moveCount += ghost.speed
@@ -288,7 +263,6 @@ def main():
         
         pg.display.flip()
         FPSCLOCK.tick(FPS)
-
 
 if __name__ == '__main__':
     main()

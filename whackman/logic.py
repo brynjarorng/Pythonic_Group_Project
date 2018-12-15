@@ -46,7 +46,6 @@ def moveGhost(maze, ghost):
     
     if not beneath.isalpha():
         ghost.beneath = beneath
-
     maze[newPos[1]][newPos[0]] = ghost.char
     ghost.pos = newPos
     return ghost
