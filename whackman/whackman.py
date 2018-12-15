@@ -56,9 +56,10 @@ ENTITYCOLORS = {
 def checkIfDead(player, ghosts, MAZE):
     for ghost in ghosts:
         if player.pos == ghost.pos:
-            # dec. live counter and hide the player
+            # dec. live counter and hide the player and set under player to be not a coin
             player.lives -= 1
             player.diedThisGame = True
+            player.beneath = '_'
             MAZE[player.pos[1]][player.pos[0]] = '_'
             player.pos = (-1, -1)
             return
