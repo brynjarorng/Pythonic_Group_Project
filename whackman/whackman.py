@@ -1,10 +1,9 @@
 import pygame as pg
 from logic import *
 from AI import *
-#from draw import drawGame
 from sprites.Player import Player
 from sprites.Ghost import Ghost 
-import pygame.gfxdraw
+import whackmanMenu as wm
 
 FPS = 100
 SCALE = 2
@@ -24,9 +23,10 @@ GHOSTSTART = [(9,12), (19,12), (9, 18), (19,18)]
 readBoard()
 
 # Gameboard attributes
+BOTTOMOFFSET = 60
 TILE = 10 * SCALE
 WINDOWWIDTH = len(MAZE[0]) * TILE
-WINDOWHEIGHT = len(MAZE) * TILE
+WINDOWHEIGHT = len(MAZE) * TILE + BOTTOMOFFSET
 
 # Directions
 UP = (0, -1)
@@ -75,86 +75,6 @@ def drawEntities(SCREEN, TILE, MAZE):
     for ghost in GHOSTS:
         pg.draw.rect(SCREEN, ENTITYCOLORS[ghost.char], (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE), TILE-1, TILE-1))
 
-def text_objects(text, font):
-    textSurface = font.render(text, True, (255,255,255))
-    return textSurface, textSurface.get_rect() 
-
-def menu(SCREEN):
-    FPSCLOCK = pg.time.Clock()
-    openMenu = True
-
-    # 0 - Continue
-    # 1 - restart
-    # 2 - Quit
-    menuState = 0
-    
-    # main menu background positioning
-    rec = pg.Rect(0, 0, WINDOWWIDTH * (2 / 3), WINDOWHEIGHT * (2 / 3))
-    rec.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
-
-    # wait here in order to not instantly exit the menu
-    pg.time.wait(400)
-    while openMenu:
-        FPSCLOCK.tick(FPS)
-        pg.event.pump()
-
-        # draw main background
-        pg.gfxdraw.box(SCREEN, rec, (100, 100, 120, 245))
-
-        # text on screen
-        largeText = pg.font.Font('freesansbold.ttf', 60)
-
-        # draw the selection bar
-        selectBar = pg.Rect(0, 0, WINDOWWIDTH * (2 / 3), 70)
-        if menuState == 0:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
-        elif menuState == 1:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
-        elif menuState == 2:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
-        pg.gfxdraw.box(SCREEN, selectBar, (100, 0, 0, 255))
-
-        # main menu options text
-        continueTextSurf, continueText = text_objects("CONTINUE", largeText)
-        continueText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
-
-        restartTextSurf, restartText = text_objects("RESTART", largeText)
-        restartText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
-
-        quitTextSurf, quitText = text_objects("QUIT", largeText)
-        quitText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
-
-        # blit text to surface
-        SCREEN.blit(continueTextSurf, continueText)
-        SCREEN.blit(restartTextSurf, restartText)
-        SCREEN.blit(quitTextSurf, quitText)
-
-        keyinput = pg.key.get_pressed()
-        if keyinput[pg.K_ESCAPE]:
-            return True
-        elif keyinput[pg.K_DOWN]:
-            pg.time.wait(150)
-            menuState += 1
-            if menuState == 3:
-                menuState = 2
-        elif keyinput[pg.K_UP]:
-            pg.time.wait(150)
-            menuState -= 1
-            if menuState == -1:
-                menuState = 0
-        elif keyinput[pg.K_RETURN]:
-            if menuState == 0:
-                return True
-            elif menuState == 1:
-                # to implement!!!!!
-                return
-            elif menuState == 2:
-                pg.quit()
-                quit()
-
-        pg.display.flip()
-
-
 def main():
     pg.init()
     global PLAYERS, GHOSTS
@@ -175,15 +95,14 @@ def main():
     while 1:
         drawBoard(SCREEN, TILE, MAZE)
         drawEntities(SCREEN, TILE, MAZE)
-        
+        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS)
+
         pg.event.pump()
         keyinput = pg.key.get_pressed()
 
         if keyinput[pg.K_ESCAPE]:
-            menu(SCREEN)
+            wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
             pg.time.wait(250)
-            #quit()
-            #sys.exit()
 
         # Set next direction on key press
         if keyinput[pg.K_LEFT]:
