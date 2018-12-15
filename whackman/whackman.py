@@ -8,11 +8,14 @@ import gameMenu as gm
 import os, sys
 from pathlib import Path
 
-FPS = 100
+FPS = 1000
+basePath = Path(sys.argv[0]).parent
+fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
 
 # Get path of file and use that as the base path
-def initBoard(maze):
+def initBoard():
     mazePath = Path(sys.argv[0]).parent / "whackman" / 'maze.txt'
+    maze = []
     with open(mazePath) as f:
         for i, l in enumerate(f):
             maze.append([])
@@ -71,7 +74,7 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
 # Draw players and ghosts
 def drawEntities(SCREEN, TILE, players, ghosts):
     for player in players:
-        if not player.diedThisGame:
+        if not player.dead:
             if player.nextDir[0] == 1:
                 SCREEN.blit(player.img, (int(player.pos[0] * TILE), int(player.pos[1] * TILE)))
             else:
@@ -92,10 +95,7 @@ def nextLevel(players, ghosts, tile):
         ghost.speed = ghostSpeed + 2
     return players, ghosts
 
-def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts):
-    basePath = Path(sys.argv[0]).parent
-    fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
-    
+def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts):    
     largeText = pg.font.Font(str(fontLoc), 200)
     smallText = pg.font.Font(str(fontLoc), 60)
 
@@ -195,15 +195,71 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
                 continue
             return
 
+# Respawn when both die
+def respawn(players, ghosts):
+    playerStart = [(15, 23), (13, 23)] 
+    ghostStart = [(9,12), (19,12), (9, 18), (19,18)]
+    for i, player in enumerate(players):
+        player.pos = playerStart[i]
+        player.dead = False
+        player.moveDir = (0, 0)
+        player.nextDir = (0, 0)
+        player.moveCount = 0
+
+    # don't respawn if dead
+    if players[0].lives <= 0:
+        players[0].dead = True
+        players[0].pos = (-1, -1)
+
+    if players[1].lives <= 0:
+        players[1].dead = True
+        players[1].pos = (-1, -1)
+    
+    for i, ghost in enumerate(ghosts):
+        ghost.pos =  ghostStart[i]
+        ghost.path = []
+        ghost.moveCount = 0
+    return players, ghosts
+
+def gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH):
+    smallText = pg.font.Font(str(fontLoc), 53)
+
+    gameOverSurf, gameOverText = wm.text_objects('GAME OVER!', smallText)
+    gameOverText.center = (WINDOWWIDTH / 2, 240)
+    
+    pressAnySurf, pressAnyText = wm.text_objects('PRESS SPACE TO CONTINUE', smallText)
+    pressAnyText.center = (WINDOWWIDTH / 2, WINDOWHEIGHT - 300)
+
+    # player one score
+    p1Surf, p1Text = wm.text_objects('P1: ' + str(players[0].points), smallText)
+    p1Text.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2 - 50)
+
+    # player two score
+    p2Surf, p2Text = wm.text_objects('P2: ' + str(players[1].points), smallText)
+    p2Text.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2 + 5)
+
+    SCREEN.blit(gameOverSurf, gameOverText)
+    SCREEN.blit(pressAnySurf, pressAnyText)
+    SCREEN.blit(p1Surf, p1Text)
+    SCREEN.blit(p2Surf, p2Text)
+    pg.display.flip()
+
+    FPSCLOCK = pg.time.Clock()
+
+    while True:
+        pg.event.pump()
+        keyinput = pg.key.get_pressed()
+        FPSCLOCK.tick(30)
+        if keyinput[pg.K_SPACE]:
+            return False
+        
 
 # Actual game play
 def play():
     pg.init()
 
-    # The board and entities
-    maze = []
-    
-    initBoard(maze)
+    # The board and entities    
+    maze = initBoard()
 
     # Gameboard attributes
     BOTTOMOFFSET = 60
@@ -229,9 +285,14 @@ def play():
     playGame = True
 
     while playGame:
+        if players[0].dead and players[1].dead:
+            players, ghosts = respawn(players, ghosts)
+            # check if both players are dead
+            if players[1].lives <= 0 and players[0].lives <= 0:
+                playGame = gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH)
+
         if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
-            maze = []
-            initBoard(maze)
+            maze = initBoard()
             players, ghosts = nextLevel(players, ghosts, TILE)
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
         drawEntities(SCREEN, TILE, players, ghosts)
@@ -240,12 +301,15 @@ def play():
         pg.event.pump()
         keyinput = pg.key.get_pressed()
 
+        # Game menu
         if keyinput[pg.K_ESCAPE]:
             ret = gm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
+            # Restart game
             if ret == 2:
                 maze = initBoard(maze)
                 players, ghosts = initEntities()
                 countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
+            # Quit
             elif ret == 0:
                 return False
             pg.time.wait(400)
@@ -275,7 +339,7 @@ def play():
                 entity.moveDir = entity.nextDir
             # Get path from AI for ghost
             elif entity.eType == 'G' and not entity.path:
-                if entity.chasing == 'R' or entity.chasing.diedThisGame:
+                if entity.chasing == 'R' or entity.chasing.dead:
                     entity.path = randomPath(entity.pos, maze, 10)
                 else:
                     entity.path =  distShortPath(entity.pos, entity.chasing.pos, maze, 10)

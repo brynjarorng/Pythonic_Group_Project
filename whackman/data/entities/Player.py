@@ -8,4 +8,4 @@ class Player(Entity):
         self.oldPos = (0, 0)
         self.points = 0
         self.lives = 3
-        self.diedThisGame = False
+        self.dead = False
