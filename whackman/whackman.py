@@ -43,7 +43,6 @@ def initEntities():
     return players, ghosts
 
 # Draw the game board and changes during game
-
 def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     # Object attributes
     BLACK = (0,0,0)
@@ -72,7 +71,7 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
 # Draw players and ghosts
 def drawEntities(SCREEN, TILE, players, ghosts):
     for player in players:
-        if not player.diedThisGame:
+        if not player.dead:
             if player.nextDir[0] == 1:
                 SCREEN.blit(player.img, (int(player.pos[0] * TILE), int(player.pos[1] * TILE)))
             else:
@@ -91,6 +90,22 @@ def nextLevel(players, ghosts, tile):
         player.lives = lives[i]
     for ghost in ghosts:
         ghost.speed = ghostSpeed + 2
+    return players, ghosts
+
+# Respawn when both die
+def respawn(players, ghosts):
+    playerStart = [(15, 23), (13, 23)] 
+    ghostStart = [(9,12), (19,12), (9, 18), (19,18)]
+    for i, player in enumerate(players):
+        player.pos = playerStart[i]
+        player.dead = False
+        player.moveDir = (0, 0)
+        player.nextDir = (0, 0)
+        player.moveCount = 0
+    for i, ghost in enumerate(ghosts):
+        ghost.pos =  ghostStart[i]
+        ghost.path = []
+        ghost.moveCount = 0
     return players, ghosts
 
 # Actual game play
@@ -122,6 +137,9 @@ def play():
     playGame = True
 
     while playGame:
+        if players[0].dead and players[1].dead:
+            players, ghosts = respawn(players, ghosts)
+
         if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
             maze = initBoard()
             players, ghosts = nextLevel(players, ghosts, TILE)
@@ -169,7 +187,7 @@ def play():
                 entity.moveDir = entity.nextDir
             # Get path from AI for ghost
             elif entity.eType == 'G' and not entity.path:
-                if entity.chasing == 'R' or entity.chasing.diedThisGame:
+                if entity.chasing == 'R' or entity.chasing.dead:
                     entity.path = randomPath(entity.pos, maze, 10)
                 else:
                     entity.path =  distShortPath(entity.pos, entity.chasing.pos, maze, 10)
