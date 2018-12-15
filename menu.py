@@ -79,7 +79,7 @@ while 1:
             elif ev.key == pg.K_UP:
                 menuState -= 1
                 if menuState == -1:
-                    menuState = 2
+                    menuState = 3
             elif keyinput[pg.K_RETURN]:
                 if menuState == 0:
                     snakeGame.play()

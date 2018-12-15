@@ -153,7 +153,7 @@ def resetGame():
     moveY = 0
 
 def gameOver():
-    global run
+    global playGame
     runLoop = True
     while runLoop:
         keyinput = pg.key.get_pressed()
@@ -191,17 +191,21 @@ def movePlayer(keyinput):
     global moveY
     # move the player
     if keyinput[pg.K_LEFT]:
-        moveX = -moveSpeed
-        moveY = 0
+        if moveX != moveSpeed:
+            moveX = -moveSpeed
+            moveY = 0
     elif keyinput[pg.K_RIGHT]:
-        moveX = moveSpeed
-        moveY = 0
+        if moveX != -moveSpeed:
+            moveX = moveSpeed
+            moveY = 0
     elif keyinput[pg.K_UP]:
-        moveY = -moveSpeed
-        moveX = 0
+        if moveY != moveSpeed:
+            moveY = -moveSpeed
+            moveX = 0
     elif keyinput[pg.K_DOWN]:
-        moveY = moveSpeed
-        moveX = 0
+        if moveY != -moveSpeed:
+            moveY = moveSpeed
+            moveX = 0
 
 # MOVE TO SEPERATE FILE?
 def text_objects(text, font):
