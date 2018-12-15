@@ -20,13 +20,22 @@ def initBoard(maze):
                 maze[i].append(c)
 # Create players and ghosts
 def initEntities(tile):
+    # get image links
+    basePath = Path(sys.argv[0]).parent
+    imgArr = [basePath / "whackman" / "data" / "sprites" / "ghost1.png",
+    basePath / "whackman" / "data" / "sprites" / "ghost2.png",
+    basePath / "whackman" / "data" / "sprites" / "ghost3.png",
+    basePath / "whackman" / "data" / "sprites" / "ghost4.png",
+    basePath / "whackman" / "data" / "sprites" / "p1.png"]
+
     players = ['P', 'p']
     ghosts = ['A', 'B', 'C', 'D']
     ghostStart = [(9,12), (19,12), (9, 18), (19,18)]
+
     # Initializing entities
-    players = [Player('', '1', 'P', (15, 23), (0, 0), 0, 10),
-               Player('', '2', 'P', (13, 23), (0, 0), 0, 10)]
-    ghosts = [Ghost('', char, 'G', ghostStart[i], (0, 0), 0, 4, 'R') for i, char in enumerate(ghosts)]
+    players = [Player(imgArr[4], '1', 'P', (15, 23), (0, 0), 0, 10),
+               Player(imgArr[4], '2', 'P', (13, 23), (0, 0), 0, 10)]
+    ghosts = [Ghost(imgArr[i], char, 'G', ghostStart[i], (0, 0), 0, 4, 'R') for i, char in enumerate(ghosts)]
     for i, player in enumerate(players):
         ghosts[i].chasing = player
     return players, ghosts
@@ -70,9 +79,12 @@ def drawEntities(SCREEN, TILE, players, ghosts):
 
     for player in players:
         if not player.diedThisGame:
-            pg.draw.circle(SCREEN, ENTITYCOLORS[player.char], (int((player.pos[0]) * TILE + TILE / 2), int((player.pos[1]) * TILE + TILE / 2)), ENTITYRADIUS)
+            if player.nextDir[0] == 1:
+                SCREEN.blit(player.img, (int(player.pos[0] * TILE), int(player.pos[1] * TILE)))
+            else:
+                SCREEN.blit(pg.transform.flip(player.img, True, False), (int(player.pos[0] * TILE), int(player.pos[1] * TILE)))
     for ghost in ghosts:
-        pg.draw.rect(SCREEN, ENTITYCOLORS[ghost.char], (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE), TILE-1, TILE-1))
+        SCREEN.blit(ghost.img, (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE)))
 
 def nextLevel(players, ghosts, tile):
     points = [p.points for p in players]
