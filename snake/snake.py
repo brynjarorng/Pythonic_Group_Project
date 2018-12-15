@@ -2,16 +2,15 @@ import pygame as pg
 import random
 from pathlib import Path
 import math
+import sys
 
 pg.mixer.pre_init(44100, 16, 2, 4096)
 pg.init()
 pg.mixer.init()
 
 # load audio
-p = Path('./')
-p = p / 'snake'
-p = p / 'crunch.wav'
-eatSound = pg.mixer.Sound(str(p.absolute()))
+audioPath = Path(sys.argv[0]).parent / "snake" / 'crunch.wav'
+eatSound = pg.mixer.Sound(str(audioPath))
 
 # run variable
 run = True
