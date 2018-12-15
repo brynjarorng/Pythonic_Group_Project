@@ -101,7 +101,7 @@ def drawGame(SCREEN, TILE, MAZE):
                         if ghost.char == c:
                             GHOSTS[i].pos = (x, y)
 
-def main():
+def play():
     pg.init()
     global PLAYERS, GHOSTS
 
@@ -117,7 +117,8 @@ def main():
     FPSCLOCK = pg.time.Clock()
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
-    while 1:
+    playGame = True
+    while playGame:
         drawGame(SCREEN, TILE, MAZE)
         wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS)
         
@@ -125,8 +126,8 @@ def main():
         keyinput = pg.key.get_pressed()
 
         if keyinput[pg.K_ESCAPE]:
-            wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
-            pg.time.wait(250)
+            playGame = wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
+            pg.time.wait(400)
 
         # Set next direction on key press
         if keyinput[pg.K_LEFT]:
@@ -186,9 +187,3 @@ def main():
         
         pg.display.flip()
         FPSCLOCK.tick(FPS)
-
-if __name__ == '__main__':
-    main()
-
-def play():
-    main()

@@ -27,9 +27,6 @@ selectBar = pg.Rect(0, 0, 800, 100)
 # 2 - play whackman
 # 3 - quit
 menuState = 0
-nextState = -1
-select = 0
-selectMax = 12
 
 while 1:
     gameDisplay = pg.display.set_mode((height,width))
@@ -67,39 +64,32 @@ while 1:
         selectBar.center = ((height/2),(width/2) + 100)
     pg.gfxdraw.box(gameDisplay, selectBar, (100,0,0,127))
 
-    # select what to hover next
-    if keyinput[pg.K_UP]:
-        nextState = 1
-    elif keyinput[pg.K_DOWN]:
-        nextState = 2
-
-    # select next menu
-    if select == selectMax:
-        select = 0
-        if nextState == 1:
-            menuState -= 1
-            nextState = -1
-            if menuState == -1:
-                menuState = 3
-        elif nextState == 2:
-            menuState += 1
-            nextState = -1
-            if menuState == 4:
-                menuState = 0
-    else:
-        select += 1
-    
-    # check if to play a game or quit the game
-    if keyinput[pg.K_RETURN]:
-        if menuState == 0:
-            snakeGame.play()
-        elif menuState == 1:
-            pongGame.play()
-        elif menuState == 2:
-            whackmanGame.play()
-        elif menuState == 3:
+    # menu state machine
+    for ev in pg.event.get():
+        if ev.type == pg.locals.QUIT:
             pg.quit()
-            quit()
+            sys.exit()
+        
+        elif ev.type == pygame.locals.KEYDOWN:
+            if ev.key == pg.K_DOWN:
+                menuState += 1
+                if menuState == 4:
+                    menuState = 0
+            elif ev.key == pg.K_UP:
+                menuState -= 1
+                if menuState == -1:
+                    menuState = 2
+            elif keyinput[pg.K_RETURN]:
+                if menuState == 0:
+                    snakeGame.play()
+                elif menuState == 1:
+                    pongGame.play()
+                elif menuState == 2:
+                    whackmanGame.play()
+                elif menuState == 3:
+                    pg.quit()
+                    quit()
+    
 
     pg.display.update()
     clock.tick(60)

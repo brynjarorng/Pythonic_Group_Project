@@ -11,13 +11,6 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
     # 1 - restart
     # 2 - Quit
     menuState = 0
-    menuDelay = 0
-
-    # -1 - Do nothing
-    # 0 - go down
-    # 1 - go up
-    # 2 - select
-    nextMenuState = 0
     
     # main menu background positioning
     rec = pg.Rect(0, 0, WINDOWWIDTH * (2 / 3), WINDOWHEIGHT * (2 / 3))
@@ -26,6 +19,7 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
     # wait here in order to not instantly exit the menu
     pg.time.wait(400)
     
+    pg.event.clear()
     while openMenu:
         FPSCLOCK.tick(FPS)
         pg.event.pump()
@@ -60,43 +54,31 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
         SCREEN.blit(continueTextSurf, continueText)
         SCREEN.blit(restartTextSurf, restartText)
         SCREEN.blit(quitTextSurf, quitText)
-        
-        # the menu selection logic
-        keyinput = pg.key.get_pressed()
-        if keyinput[pg.K_ESCAPE]:
-            quit()
-            return True
-        elif keyinput[pg.K_DOWN]:
-            nextMenuState = 0
-        elif keyinput[pg.K_UP]:
-            nextMenuState = 1
-        elif keyinput[pg.K_RETURN]:
-            nextMenuState = 2
-        else:
-            nextMenuState = -1
-        
-        # EXEC logic
-        if menuDelay == 12:
-            menuDelay = 0
-            if nextMenuState == 0:
-                menuState += 1
-                if menuState == 3:
-                    menuState = 0
-            elif nextMenuState == 1:
-                menuState -= 1
-                if menuState == -1:
-                    menuState = 2
-            elif nextMenuState == 2:
-                if menuState == 0:
+
+        for ev in pg.event.get():
+            if ev.type == pg.locals.QUIT:
+                pg.quit()
+                sys.exit()
+            
+            elif ev.type == pygame.locals.KEYDOWN:
+                if ev.key == pg.K_DOWN:
+                    menuState += 1
+                    if menuState == 3:
+                        menuState = 0
+                elif ev.key == pg.K_UP:
+                    menuState -= 1
+                    if menuState == -1:
+                        menuState = 2
+                elif ev.key == pg.K_RETURN:
+                    if menuState == 0:
+                        return True
+                    elif menuState == 1:
+                        # to implement!!!!!
+                        return
+                    elif menuState == 2:
+                        return False
+                elif ev.type == pg.KEYDOWN and ev.key == pg.K_ESCAPE:
                     return True
-                elif menuState == 1:
-                    # to implement!!!!!
-                    return
-                elif menuState == 2:
-                    pg.quit()
-                    quit()
-        else:
-            menuDelay += 1
 
         
         pg.display.flip()

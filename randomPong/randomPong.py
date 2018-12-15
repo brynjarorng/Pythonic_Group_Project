@@ -167,22 +167,26 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
         
         # the menu selection logic
         for ev in pg.event.get():
-            if ev.key == pg.K_DOWN and ev.type == pg.KEYDOWN:
-                menuState += 1
-                if menuState == 2:
-                    menuState = 0
-            elif ev.key == pg.K_UP and ev.type == pg.KEYDOWN:
-                menuState -= 1
-                if menuState == -1:
-                    menuState = 1
-            elif ev.key == pg.K_RETURN and ev.type == pg.KEYDOWN:
-                if menuState == 0:
+            if ev.type == pg.locals.QUIT:
+                pg.quit()
+                sys.exit()
+            
+            elif ev.type == pg.locals.KEYDOWN:
+                if ev.key == pg.K_DOWN and ev.type == pg.KEYDOWN:
+                    menuState += 1
+                    if menuState == 2:
+                        menuState = 0
+                elif ev.key == pg.K_UP and ev.type == pg.KEYDOWN:
+                    menuState -= 1
+                    if menuState == -1:
+                        menuState = 1
+                elif ev.key == pg.K_RETURN and ev.type == pg.KEYDOWN:
+                    if menuState == 0:
+                        return True
+                    elif menuState == 1:
+                        return False
+                elif ev.key == pg.K_ESCAPE and ev.type == pg.KEYDOWN:
                     return True
-                elif menuState == 1:
-                    return False
-            elif ev.key == pg.K_ESCAPE and ev.type == pg.KEYDOWN:
-                return True
-        print(menuState)
         
         pg.display.flip()
 
