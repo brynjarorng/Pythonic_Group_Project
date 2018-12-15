@@ -60,6 +60,9 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
                 pg.quit()
                 sys.exit()
             
+            # 0 - exit
+            # 1 - continue
+            # 2 - restart
             elif ev.type == pygame.locals.KEYDOWN:
                 if ev.key == pg.K_DOWN:
                     menuState += 1
@@ -71,14 +74,13 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
                         menuState = 2
                 elif ev.key == pg.K_RETURN:
                     if menuState == 0:
-                        return True
+                        return 1
                     elif menuState == 1:
-                        # to implement!!!!!
-                        return
+                        return 2
                     elif menuState == 2:
-                        return False
+                        return 0
                 elif ev.type == pg.KEYDOWN and ev.key == pg.K_ESCAPE:
-                    return True
+                    return 1
 
         
         pg.display.flip()

@@ -18,8 +18,10 @@ def initBoard(maze):
             maze.append([])
             for c in l.strip():
                 maze[i].append(c)
+    return maze
+
 # Create players and ghosts
-def initEntities(tile):
+def initEntities():
     # get image links
     basePath = Path(sys.argv[0]).parent
     imgArr = [basePath / "whackman" / "data" / "sprites" / "ghost1.png",
@@ -40,6 +42,7 @@ def initEntities(tile):
         ghosts[i].chasing = player
     return players, ghosts
 # Draw the game board and changes during game
+
 def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     # Object attributes
     BLACK = (0,0,0)
@@ -90,7 +93,7 @@ def nextLevel(players, ghosts, tile):
     points = [p.points for p in players]
     lives = [p.lives for p in players]
     ghostSpeed = ghosts[0].speed
-    players, ghosts = initEntities(tile)
+    players, ghosts = initEntities()
     for i, player in enumerate(players):
         player.points = points[i]
         player.lives = lives[i]
@@ -108,14 +111,14 @@ def play():
 
     # Gameboard attributes
     BOTTOMOFFSET = 60
-    TILE = 10 * SCALE
+    TILE = 12 * SCALE
     WINDOWWIDTH = len(maze[0]) * TILE
     WINDOWHEIGHT = len(maze) * TILE + BOTTOMOFFSET
 
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     FPSCLOCK = pg.time.Clock()
 
-    players, ghosts = initEntities(TILE)
+    players, ghosts = initEntities()
 
     # Directions
     UP = (0, -1)
@@ -140,7 +143,13 @@ def play():
         keyinput = pg.key.get_pressed()
 
         if keyinput[pg.K_ESCAPE]:
-            playGame = wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
+            ret = wm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
+            if ret == 2:
+                print('t')
+                maze = initBoard(maze)
+                players, ghosts = initEntities()
+            elif ret == 0:
+                return False
             pg.time.wait(400)
 
         # Set next direction on key press
