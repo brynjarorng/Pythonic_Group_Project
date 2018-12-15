@@ -1,6 +1,7 @@
 import pygame as pg
 import pygame.gfxdraw
 import snake.snake as snake
+import whackman.whackman.py as whackman
 
 pg.init()
 clock = pg.time.Clock()

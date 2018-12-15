@@ -64,6 +64,7 @@ def checkIfDead(player, ghosts, MAZE):
             return
 
 def drawGame(SCREEN, TILE, MAZE):
+    pg.draw.rect(SCREEN, BLACK, (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
     for y, l in enumerate(MAZE):
         for x, c in enumerate(l):
             # Walls
@@ -126,12 +127,13 @@ def text_objects(text, font):
     return textSurface, textSurface.get_rect() 
 
 
-def menu():
+def menu(SCREEN):
     FPSCLOCK = pg.time.Clock()
     openMenu = True
 
     # 0 - Continue
-    # 1 - Quit
+    # 1 - restart
+    # 2 - Quit
     menuState = 0
     
     # main menu background positioning
@@ -155,33 +157,46 @@ def menu():
         if menuState == 0:
             selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
         elif menuState == 1:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (2 / 3)))
+            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
+        elif menuState == 2:
+            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
         pg.gfxdraw.box(SCREEN, selectBar, (100, 0, 0, 255))
 
         # main menu options text
         continueTextSurf, continueText = text_objects("CONTINUE", largeText)
         continueText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
 
+        restartTextSurf, restartText = text_objects("RESTART", largeText)
+        restartText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
+
         quitTextSurf, quitText = text_objects("QUIT", largeText)
-        quitText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (2 / 3)))
+        quitText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
 
         # blit text to surface
         SCREEN.blit(continueTextSurf, continueText)
+        SCREEN.blit(restartTextSurf, restartText)
         SCREEN.blit(quitTextSurf, quitText)
 
         keyinput = pg.key.get_pressed()
-        #SCREEN.blit(surf1, (100, 100))
-
         if keyinput[pg.K_ESCAPE]:
             return True
-        if keyinput[pg.K_DOWN]:
-            menuState = 1
-        if keyinput[pg.K_UP]:
-            menuState = 0
-        if keyinput[pg.K_RETURN]:
+        elif keyinput[pg.K_DOWN]:
+            pg.time.wait(150)
+            menuState += 1
+            if menuState == 3:
+                menuState = 2
+        elif keyinput[pg.K_UP]:
+            pg.time.wait(150)
+            menuState -= 1
+            if menuState == -1:
+                menuState = 0
+        elif keyinput[pg.K_RETURN]:
             if menuState == 0:
                 return True
             elif menuState == 1:
+                # to implement!!!!!
+                return
+            elif menuState == 2:
                 pg.quit()
                 quit()
 
@@ -211,7 +226,7 @@ def main():
         keyinput = pg.key.get_pressed()
 
         if keyinput[pg.K_ESCAPE]:
-            menu()
+            menu(SCREEN)
             pg.time.wait(250)
             #quit()
             #sys.exit()
