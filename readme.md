@@ -1,6 +1,6 @@
 # Mini Arcade
 
-Mini arcade is a project running old school games writen in python using pygame.There are 3 games currently in the arcade:
+Mini arcade is a project running old school games writen in python using pygame. There are 3 games currently in the arcade:
 
 * Snake
 * Pong
