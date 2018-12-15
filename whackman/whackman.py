@@ -8,7 +8,6 @@ import os, sys
 from pathlib import Path
 
 FPS = 100
-SCALE = 2
 
 # Get path of file and use that as the base path
 def initBoard(maze):
@@ -18,6 +17,7 @@ def initBoard(maze):
             maze.append([])
             for c in l.strip():
                 maze[i].append(c)
+
 # Create players and ghosts
 def initEntities(tile):
     # get image links
@@ -39,6 +39,7 @@ def initEntities(tile):
     for i, player in enumerate(players):
         ghosts[i].chasing = player
     return players, ghosts
+
 # Draw the game board and changes during game
 def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     # Object attributes
@@ -46,7 +47,7 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     GOLD = (255,223,0)
     BLUE = (0, 25, 175)
     COINRADIUS = int(TILE/10)
-    BIGCOINRADIUS = int(TILE/3)
+    BIGCOINRADIUS = int(TILE/4)
     noCoinsLeft = True
     
     pg.draw.rect(SCREEN, BLACK, (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
@@ -64,19 +65,9 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
                 noCoinsLeft = False
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRADIUS)
     return noCoinsLeft
+
 # Draw players and ghosts
 def drawEntities(SCREEN, TILE, players, ghosts):
-    ENTITYRADIUS = int(TILE/2)-1
-    # Colors
-    ENTITYCOLORS = {
-        "1": (255, 255, 255),
-        "2": (150, 150, 150),
-
-        "A": (255, 255, 0),
-        "B": (200, 50, 20),
-        "C": (0, 255, 0),
-        "D": (175, 0, 175)}
-
     for player in players:
         if not player.diedThisGame:
             if player.nextDir[0] == 1:
@@ -86,6 +77,7 @@ def drawEntities(SCREEN, TILE, players, ghosts):
     for ghost in ghosts:
         SCREEN.blit(ghost.img, (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE)))
 
+# Load next level when prev level is won
 def nextLevel(players, ghosts, tile):
     points = [p.points for p in players]
     lives = [p.lives for p in players]
@@ -98,6 +90,7 @@ def nextLevel(players, ghosts, tile):
         ghost.speed = ghostSpeed + 2
     return players, ghosts
 
+# Actual game play
 def play():
     pg.init()
 
@@ -108,7 +101,7 @@ def play():
 
     # Gameboard attributes
     BOTTOMOFFSET = 60
-    TILE = 10 * SCALE
+    TILE = 24
     WINDOWWIDTH = len(maze[0]) * TILE
     WINDOWHEIGHT = len(maze) * TILE + BOTTOMOFFSET
 
