@@ -22,9 +22,10 @@ GHOSTS = ['A', 'B', 'C', 'D']
 readBoard()
 
 # Gameboard attributes
+BOTTOMOFFSET = 60
 TILE = 10 * SCALE
 WINDOWWIDTH = len(MAZE[0]) * TILE
-WINDOWHEIGHT = len(MAZE) * TILE
+WINDOWHEIGHT = len(MAZE) * TILE + BOTTOMOFFSET
 
 # Directions
 UP = (0, -1)
@@ -139,6 +140,7 @@ def main():
 
     while 1:
         drawGame(SCREEN, TILE, MAZE)
+        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS)
         
         pg.event.pump()
         keyinput = pg.key.get_pressed()
