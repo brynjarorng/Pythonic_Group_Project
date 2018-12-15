@@ -29,7 +29,7 @@ readBoard()
 
 # Gameboard attributes
 BOTTOMOFFSET = 60
-TILE = 10 * SCALE
+TILE = 12 * SCALE
 WINDOWWIDTH = len(MAZE[0]) * TILE
 WINDOWHEIGHT = len(MAZE) * TILE + BOTTOMOFFSET
 
@@ -76,18 +76,29 @@ def drawBoard(SCREEN, TILE, MAZE):
 def drawEntities(SCREEN, TILE, MAZE):
     for player in PLAYERS:
         if not player.diedThisGame:
-            pg.draw.circle(SCREEN, ENTITYCOLORS[player.char], (int((player.pos[0]) * TILE + TILE / 2), int((player.pos[1]) * TILE + TILE / 2)), ENTITYRADIUS)
+            if player.nextDir[0] == 1:
+                SCREEN.blit(player.img, (int(player.pos[0] * TILE), int(player.pos[1] * TILE)))
+            else:
+                SCREEN.blit(pg.transform.flip(player.img, True, False), (int(player.pos[0] * TILE), int(player.pos[1] * TILE)))
     for ghost in GHOSTS:
-        pg.draw.rect(SCREEN, ENTITYCOLORS[ghost.char], (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE), TILE-1, TILE-1))
+        SCREEN.blit(ghost.img, (int(ghost.pos[0] * TILE), int(ghost.pos[1] * TILE)))
 
 def play():
     pg.init()
     global PLAYERS, GHOSTS
 
+    # get image links
+    basePath = Path(sys.argv[0]).parent
+    ghostArr = [basePath / "whackman" / "data" / "sprites" / "ghost1.png",
+    basePath / "whackman" / "data" / "sprites" / "ghost2.png",
+    basePath / "whackman" / "data" / "sprites" / "ghost3.png",
+    basePath / "whackman" / "data" / "sprites" / "ghost4.png",
+    basePath / "whackman" / "data" / "sprites" / "p1.png"]
+
     # Initializing entities
-    PLAYERS = [Player('', '1', 'P', (15, 23), (0, 0), 0, 10),
-               Player('', '2', 'P', (13, 23), (0, 0), 0, 10)]
-    GHOSTS = [Ghost('', char, 'G', GHOSTSTART[i], (0, 0), 0, 10, 'R') for i, char in enumerate(GHOSTS)]
+    PLAYERS = [Player(ghostArr[4], '1', 'P', (15, 23), (0, 0), 0, 10),
+               Player(ghostArr[4], '2', 'P', (13, 23), (0, 0), 0, 10)]
+    GHOSTS = [Ghost(ghostArr[i], char, 'G', GHOSTSTART[i], (0, 0), 0, 10, 'R') for i, char in enumerate(GHOSTS)]
     for i, player in enumerate(PLAYERS):
         GHOSTS[i].chasing = player
 
