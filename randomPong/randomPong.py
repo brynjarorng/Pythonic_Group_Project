@@ -121,7 +121,6 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
     # 0 - Continue
     # 1 - Exit
     menuState = 0
-    menuDelay = 0
 
     # -1 - Do nothing
     # 0 - go down
