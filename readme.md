@@ -46,7 +46,7 @@ or
 * `python ./menu.py`
 
 
-## Honorable mentions
+## Game assets
 
 ### Snake
 Sound - Biting into apple
