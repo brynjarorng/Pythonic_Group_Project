@@ -31,7 +31,7 @@ def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
 
     # lives
     baseHeartPos = 10
-    for live in range(PLAYERS[0].lives):
+    for life in range(PLAYERS[0].lives):
         SCREEN.blit(heart, (baseHeartPos, WINDOWHEIGHT - BOTTOMOFFSET / 2 + 10))
         baseHeartPos += 15
 

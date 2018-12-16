@@ -8,7 +8,6 @@ import gameMenu as gm
 import os, sys
 from pathlib import Path
 
-FPS = 100
 basePath = Path(sys.argv[0]).parent
 fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
 
@@ -123,6 +122,11 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
         FPSCLOCK.tick(FPS)
         pg.event.pump()
 
+        for ev in pg.event.get():
+            if ev.type == pg.locals.QUIT:
+                pg.quit()
+                sys.exit()
+
         keyinput = pg.key.get_pressed()
         if keyinput[pg.K_SPACE]:
             spacePressed = True
@@ -182,7 +186,7 @@ def respawn(players, ghosts):
     return players, ghosts
 
 # Both player are dead and have no lives left
-def gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH):
+def gameOver(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, p1Score, p2Score=False):
     smallText = pg.font.Font(str(fontLoc), 53)
 
     gameOverSurf, gameOverText = wm.text_objects('GAME OVER!', smallText)
@@ -192,17 +196,19 @@ def gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH):
     pressAnyText.center = (WINDOWWIDTH / 2, WINDOWHEIGHT - 300)
 
     # player one score
-    p1Surf, p1Text = wm.text_objects('P1: ' + str(players[0].points), smallText)
+    p1Surf, p1Text = wm.text_objects('P1: ' + str(p1Score), smallText)
     p1Text.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2 - 50)
-
-    # player two score
-    p2Surf, p2Text = wm.text_objects('P2: ' + str(players[1].points), smallText)
-    p2Text.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2 + 5)
 
     SCREEN.blit(gameOverSurf, gameOverText)
     SCREEN.blit(pressAnySurf, pressAnyText)
     SCREEN.blit(p1Surf, p1Text)
-    SCREEN.blit(p2Surf, p2Text)
+    
+    # player two score
+    if p2Score:
+        p2Surf, p2Text = wm.text_objects('P2: ' + str(p2Score), smallText)
+        p2Text.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2 + 5)
+        SCREEN.blit(p2Surf, p2Text)
+    
     pg.display.flip()
 
     FPSCLOCK = pg.time.Clock()
@@ -211,9 +217,14 @@ def gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH):
         pg.event.pump()
         keyinput = pg.key.get_pressed()
         FPSCLOCK.tick(30)
+        # Quit button
+        for ev in pg.event.get():
+            if ev.type == pg.locals.QUIT:
+                pg.quit()
+                sys.exit()
+
         if keyinput[pg.K_SPACE]:
             return False
-        
 
 # Actual gameplay
 def play():
@@ -255,7 +266,7 @@ def play():
                 countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts)
             # check if both players are dead
             if players[1].lives <= 0 and players[0].lives <= 0:
-                playGame = gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH)
+                playGame = gameOver(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, players[0].points, players[1].points)
 
         # Check to see if there are any coins left, if not: next level
         if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
@@ -267,6 +278,12 @@ def play():
 
         pg.event.pump()
         keyinput = pg.key.get_pressed()
+
+        # Quit button
+        for ev in pg.event.get():
+            if ev.type == pg.locals.QUIT:
+                pg.quit()
+                sys.exit()
 
         # Game menu
         if keyinput[pg.K_ESCAPE]:

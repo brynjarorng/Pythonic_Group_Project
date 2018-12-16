@@ -8,6 +8,9 @@ import gameMenu as gm
 SCALE = 2
 FPS = 200 * SCALE
 
+basePath = Path(sys.argv[0]).parent
+fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
+
 WINDOWWIDTH = 420 * SCALE
 WINDOWHEIGHT = 350 * SCALE
 WINMIDX = WINDOWWIDTH/2
@@ -18,6 +21,10 @@ PADDLEHEIGHT = (WINDOWHEIGHT - PADDLESIZE)/2
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+
+def text_objects(text, font):
+    textSurface = font.render(text, True, (255,255,255))
+    return textSurface, textSurface.get_rect() 
 
 def drawArena():
     SCREEN.fill((0,0,0))
@@ -114,14 +121,71 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
             return (-1, 0)
     return (1, 1)
 
+# Count after space has been pressed
+def countDownGameStart(SCREEN, score1, score2, ball, paddle1, paddle2):    
+    largeText = pg.font.Font(str(fontLoc), 200)
+    smallText = pg.font.Font(str(fontLoc), 60)
+
+    pressSpaceSurf, pressSpaceText = text_objects('PRESS SPACE TO START', smallText)
+    pressSpaceText.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+    
+    countSTarr = []
+    for x in ['3', '2', '1', 'GO!']:
+        countSurf, countText = text_objects(x, largeText)
+        countText.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+        countSTarr.append((countSurf, countText))
+    
+    FPSCLOCK = pg.time.Clock()
+    spacePressed = False
+    counter = 0
+    blinkSpeed = [int(FPS*(1/2)), FPS]
+    while True:
+        FPSCLOCK.tick(FPS)
+        pg.event.pump()
+
+        for ev in pg.event.get():
+            if ev.type == pg.locals.QUIT:
+                pg.quit()
+                sys.exit()
+
+        keyinput = pg.key.get_pressed()
+        if keyinput[pg.K_SPACE]:
+            spacePressed = True
+
+        drawArena()
+        drawScore(score1, score2)
+        drawBall(ball)
+        drawPaddle(paddle1)
+        drawPaddle(paddle2)
         
+        # countdown sequence
+        if spacePressed:
+            SCREEN.blit(countSTarr[counter][0], countSTarr[counter][1])
+            pg.display.flip()
+            for i in range(int(FPS * (2 / 3))):
+                pg.event.pump()
+                FPSCLOCK.tick(FPS)
+                continue
+            counter += 1
+            if counter == 4:
+                return
+        else:
+            print(blinkSpeed)
+            for i, speed in enumerate(blinkSpeed):
+                for x in range(speed):
+                    if i == 1:
+                        SCREEN.blit(pressSpaceSurf, pressSpaceText)
+                    pg.display.flip()
+                    pg.event.pump()
+                    FPSCLOCK.tick(FPS)
+                    keyinput = pg.key.get_pressed()
+                    if keyinput[pg.K_SPACE]:
+                        break
+
+
 def main():
     pg.init()
-    global SCREEN
-    global FONTSIZE
-    global FONT
-    global HITSOUND
-    global SCORESTATUS
+    global SCREEN, FONTSIZE, FONT, HITSOUND, SCORESTATUS
 
     #Load Audio
     pg.mixer.pre_init(44100, 16, 2, 4096)
@@ -144,6 +208,8 @@ def main():
     paddle2 = pg.Rect(OBJECTWIDTH, PADDLEHEIGHT, OBJECTWIDTH, PADDLESIZE)
 
     pg.mouse.set_visible(0)
+
+    countDownGameStart(SCREEN, score1, score2, ball, paddle1, paddle2)
 
     playGame = True
     while playGame:
@@ -182,6 +248,7 @@ def main():
                 resetObjects(ball, paddle1, paddle2)
                 score1 = 0
                 score2 = 0
+                countDownGameStart(SCREEN, score1, score2, ball, paddle1, paddle2)
             elif ret == 0:
                 return False
         
