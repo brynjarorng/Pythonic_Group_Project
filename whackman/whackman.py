@@ -329,7 +329,6 @@ def play():
             if ret == 2:
                 maze = initBoard()
                 players, ghosts = initEntities()
-                countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
             # Quit
             elif ret == 0:
                 return False

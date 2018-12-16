@@ -11,6 +11,9 @@ Mini arcade is a project running old school games writen in python using pygame.
 * Brynjar Örn Grétarsson - *brynjarog17* - [github](https://github.com/brynjarorng)
 * Daði Steinn Brynjarsson - *dadib17* - [github](https://github.com/dadisteinn)
 
+## prerequisites
+To be able to successfully launch this project you need to have installed **python 3.7.1**, link below. It is also very handy to have [git](https://git-scm.com/) installed to be able to follow the instructions below exactly.
+
 
 ## Built with
 * [VS Code](https://code.visualstudio.com/Download) - Code editor
@@ -19,21 +22,28 @@ Mini arcade is a project running old school games writen in python using pygame.
 
 
 ## Installation
-The first step is to make sure that python is installed on your system, **python 3.7.1** was used for this project. Follow the link above and choose the correct version for you OS.
+The first step is to make sure that python is installed on your system, **python 3.7.1** was used for this project. Follow the link above and choose the correct version for you OS. Make sure use python 3. The game has not been tested on python 2.
 
-Next you need to install pygame, this can be done with the following command:
-* `python3 -m pip install -U pygame --user`
-For further information can be found in the link above.
+Next make sure you have the newest version of pip:
+* `python3 -m pip install --upgrade pip`
+or
+* `python -m pip install --upgrade pip`
+
+Next you need to install pygame, this can be done with the following command. Make sure to install the version we used for maximum stability **pygame 1.9.4**. The game will probably not run with other versions of pygame because of gfxdraw:
+* `python3 -m pip install -U pygame==1.9.4 --user`
+or
+* `python -m pip install -U pygame==1.9.4 --user`
+
+Further information about python or pygame can be found in the links above.
 
 Next you need to clone the repo. Open a terminal and manouver into the appropriate directory and enter the following command:
 
 * `git clone https://github.com/brynjarorng/Pythonic_Group_Project`
 
 Now that everything is setup, using the terminal, navigate into *Pythonic_Group_Project* and run this command to play the game:
-* `python ./menu.py`
-
-If python 3 hasen't been added to path you need to run the folowing:
 * `python3 ./menu.py`
+or
+* `python ./menu.py`
 
 
 ## Honorable mentions
