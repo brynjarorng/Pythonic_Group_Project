@@ -13,6 +13,9 @@ def text_objects(text, font):
     return textSurface, textSurface.get_rect() 
 
 def drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, PLAYERS):
+    # clear the old score from the bottom
+    pg.draw.rect(SCREEN, (0,0,0), (0, WINDOWHEIGHT - BOTTOMOFFSET, WINDOWWIDTH, BOTTOMOFFSET))
+
     largeText = pg.font.Font(str(fontLoc), 35)
     heart = pg.image.load(str(heartLoc))
 
