@@ -1,3 +1,5 @@
+from pathlib import Path
+import os, sys
 import pygame as pg
 import pygame.gfxdraw
 import snake.snake as snakeGame
@@ -5,20 +7,29 @@ import randomPong.randomPong as pongGame
 import whackman.whackman as whackmanGame
 
 pg.init()
+pg.display.set_caption('Mini arcade')
 clock = pg.time.Clock()
 height = 800
 width = 800
 
 def text_objects(text, font):
-    textSurface = font.render(text, True, (0,0,0))
+    textSurface = font.render(text, True, (255,255,255))
     return textSurface, textSurface.get_rect() 
 
-largeText = pg.font.Font('freesansbold.ttf',80)
+basePath = Path(sys.argv[0]).parent
+titleIconPath = basePath / "whackman" / "data" / "sprites" / "ghost.png"
+titleIcon = pg.image.load(str(titleIconPath))
+pg.display.set_icon(titleIcon)
+
+fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
+largeText = pg.font.Font(str(fontLoc), 60)
+menuTitle = pg.font.Font(str(fontLoc), 100)
 
 # menu text elements
-SnakeSurf, snake = text_objects("Play Snake", largeText)
-PongSurf, pong = text_objects("Play Pong", largeText)
-WhackmanSurf, whackman = text_objects("Play Whackman", largeText)
+ArcadeSurf, miniArcade = text_objects("Mini arcade", menuTitle)
+SnakeSurf, snake = text_objects("Snake", largeText)
+PongSurf, pong = text_objects("Pong", largeText)
+WhackmanSurf, whackman = text_objects("Whackman", largeText)
 QuitGameSurf, quitGame = text_objects("Quit", largeText)
 selectBar = pg.Rect(0, 0, 800, 100)
 
@@ -30,16 +41,18 @@ menuState = 0
 
 while 1:
     gameDisplay = pg.display.set_mode((height,width))
-
+    
     # UI elements
-    gameDisplay.fill((255,255,255))
+    gameDisplay.fill((0,0,0))
 
-    snake.center = ((height/2),(width/2) - 200)
-    pong.center = ((height/2),(width/2) - 100)
-    whackman.center = ((height/2),(width/2))
-    quitGame.center = ((height/2),(width/2) + 100)
+    miniArcade.center = ((height/2),(width/2) - 250)
+    snake.center = ((height/2),(width/2) - 100)
+    pong.center = ((height/2),(width/2))
+    whackman.center = ((height/2),(width/2) + 100)
+    quitGame.center = ((height/2),(width/2) + 200)
 
     # add elements to drawing surface
+    gameDisplay.blit(ArcadeSurf, miniArcade)
     gameDisplay.blit(SnakeSurf, snake)
     gameDisplay.blit(PongSurf, pong)
     gameDisplay.blit(WhackmanSurf, whackman)
@@ -53,17 +66,17 @@ while 1:
     
     # hover play snake
     if menuState == 0:
-        selectBar.center = ((height/2),(width/2) - 200)
+        selectBar.center = ((height/2),(width/2) - 100)
     # hover play pong
     elif menuState == 1:
-        selectBar.center = ((height/2),(width/2) - 100)
+        selectBar.center = ((height/2),(width/2))
     # hover play whackman
     elif menuState == 2:
-        selectBar.center = ((height/2),(width/2))
+        selectBar.center = ((height/2),(width/2) + 100)
     # hover quit
     elif menuState == 3:
-        selectBar.center = ((height/2),(width/2) + 100)
-    pg.gfxdraw.box(gameDisplay, selectBar, (100,0,0,127))
+        selectBar.center = ((height/2),(width/2) + 200)
+    pg.gfxdraw.box(gameDisplay, selectBar, (0, 25, 175, 125))
 
     # menu state machine
     for ev in pg.event.get():

@@ -1,9 +1,16 @@
 import pygame as pg
 import pygame.gfxdraw
+from pathlib import Path
+import os, sys
 
 def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
     FPSCLOCK = pg.time.Clock()
     openMenu = True
+
+    # text on screen
+    basePath = Path(sys.argv[0]).parent
+    fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
+    largeText = pg.font.Font(str(fontLoc), 60)
 
     # 0 - Continue
     # 1 - restart
@@ -23,10 +30,7 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
         pg.event.pump()
 
         # draw main background
-        pg.gfxdraw.box(SCREEN, rec, (100, 100, 120, 245))
-
-        # text on screen
-        largeText = pg.font.Font('freesansbold.ttf', 60)
+        pg.gfxdraw.box(SCREEN, rec, (0, 0, 0, 125))
 
         # draw the selection bar
         selectBar = pg.Rect(0, 0, 520, 70)
@@ -36,7 +40,7 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
             selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
         elif menuState == 2:
             selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
-        pg.gfxdraw.box(SCREEN, selectBar, (100, 0, 0, 255))
+        
 
         # main menu options text
         continueTextSurf, continueText = text_objects("CONTINUE", largeText)
@@ -52,6 +56,7 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
         SCREEN.blit(continueTextSurf, continueText)
         SCREEN.blit(restartTextSurf, restartText)
         SCREEN.blit(quitTextSurf, quitText)
+        pg.gfxdraw.box(SCREEN, selectBar, (0, 25, 175, 125))
 
         for ev in pg.event.get():
             if ev.type == pg.locals.QUIT:

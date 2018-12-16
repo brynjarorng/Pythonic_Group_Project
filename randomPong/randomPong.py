@@ -134,7 +134,6 @@ def main():
 
     FPSCLOCK = pg.time.Clock()
     SCREEN = pg.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-    pg.display.set_caption('Pong')
 
     ballDirX , ballDirY= -1, -1
     score1, score2 = 0, 0
