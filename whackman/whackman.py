@@ -8,7 +8,7 @@ import gameMenu as gm
 import os, sys
 from pathlib import Path
 
-FPS = 1000
+FPS = 100
 basePath = Path(sys.argv[0]).parent
 fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
 
@@ -43,6 +43,12 @@ def initEntities():
     ghosts = [Ghost(imgArr[i], char, 'G', ghostStart[i], (0, 0), 0, 4, 'R') for i, char in enumerate(ghosts)]
     for i, player in enumerate(players):
         ghosts[i].chasing = player
+    
+    # if either player is dead, don´t set his spawn
+    for p in players:
+        if p.lives >= 0:
+            p.dead = True
+            p.pos = (-1, -1)
     return players, ghosts
 
 # Draw the game board and changes during game
@@ -54,6 +60,7 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     COINRADIUS = int(TILE/10)
     BIGCOINRADIUS = int(TILE/4)
     noCoinsLeft = True
+    coinsLeft = 0
     
     pg.draw.rect(SCREEN, BLACK, (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
     for y, l in enumerate(maze):
@@ -64,12 +71,14 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
             # Coin
             elif c == '0':
                 noCoinsLeft = False
+                coinsLeft += 1
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRADIUS)
             # Super food
             elif c == '1':
                 noCoinsLeft = False
+                coinsLeft += 1
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRADIUS)
-    return noCoinsLeft
+    return coinsLeft
 
 # Draw players and ghosts
 def drawEntities(SCREEN, TILE, players, ghosts):
@@ -115,7 +124,7 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
     count0Text.center = (WINDOWWIDTH /2 + 20, WINDOWHEIGHT / 2)
 
     FPSCLOCK = pg.time.Clock()
-    
+
     blink = True
     while True:
         FPSCLOCK.tick(FPS)
@@ -123,9 +132,9 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
 
         # blinking space
         # on
-        drawEntities(SCREEN, TILE, players, ghosts)
-        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
         drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+        drawEntities(SCREEN, TILE, players, ghosts)
         SCREEN.blit(pressSpaceSurf, pressSpaceText)
         pg.display.flip()
         if blink:
@@ -140,6 +149,8 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
         
         # off
         drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+        drawEntities(SCREEN, TILE, players, ghosts)
         pg.display.flip()
         if blink:
             for i in range(int(FPS * (1 / 3))):
@@ -157,6 +168,8 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
             # 3
             #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+            drawEntities(SCREEN, TILE, players, ghosts)
             SCREEN.blit(count3Surf, count3Text)
             pg.display.flip()
             for i in range(int(FPS * (2 / 3))):
@@ -167,6 +180,8 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
             # 2
             #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+            drawEntities(SCREEN, TILE, players, ghosts)
             SCREEN.blit(count2Surf, count2Text)
             pg.display.flip()
             for i in range(int(FPS * (2 / 3))):
@@ -177,6 +192,8 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
             # 1
             #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+            drawEntities(SCREEN, TILE, players, ghosts)
             SCREEN.blit(count1Surf, count1Text)
             pg.display.flip()
             for i in range(int(FPS * (2 / 3))):
@@ -187,6 +204,8 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
             # GO!
             #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+            drawEntities(SCREEN, TILE, players, ghosts)
             SCREEN.blit(count0Surf, count0Text)
             pg.display.flip()
             for i in range(int(FPS / 2)):
@@ -272,8 +291,6 @@ def play():
 
     players, ghosts = initEntities()
 
-    countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
-
     # Directions
     UP = (0, -1)
     DOWN = (0, 1)
@@ -287,11 +304,14 @@ def play():
     while playGame:
         if players[0].dead and players[1].dead:
             players, ghosts = respawn(players, ghosts)
+            # play the countdown animation
+            if players[0].lives > 0 or players[1].lives > 0:
+                countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts)
             # check if both players are dead
             if players[1].lives <= 0 and players[0].lives <= 0:
                 playGame = gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH)
 
-        if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
+        if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT) < 300:
             maze = initBoard()
             players, ghosts = nextLevel(players, ghosts, TILE)
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
@@ -308,7 +328,7 @@ def play():
             if ret == 2:
                 maze = initBoard(maze)
                 players, ghosts = initEntities()
-                countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
+                countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
             # Quit
             elif ret == 0:
                 return False
