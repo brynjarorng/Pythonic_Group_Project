@@ -214,7 +214,7 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
 # Respawn when both die
 def respawn(players, ghosts):
     playerStart = [(15, 23), (13, 23)] 
-    ghostStart = [(9,12), (19,12), (9, 18), (19,18)]
+    ghostStart = [(9,11), (19,11), (9, 17), (19,17)]
     for i, player in enumerate(players):
         player.pos = playerStart[i]
         player.dead = False
@@ -327,7 +327,7 @@ def play():
             ret = gm.menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS)
             # Restart game
             if ret == 2:
-                maze = initBoard(maze)
+                maze = initBoard()
                 players, ghosts = initEntities()
                 countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players, ghosts)
             # Quit
