@@ -60,7 +60,6 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
     COINRADIUS = int(TILE/10)
     BIGCOINRADIUS = int(TILE/4)
     noCoinsLeft = True
-    coinsLeft = 0
     
     pg.draw.rect(SCREEN, BLACK, (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
     for y, l in enumerate(maze):
@@ -71,14 +70,12 @@ def drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
             # Coin
             elif c == '0':
                 noCoinsLeft = False
-                coinsLeft += 1
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), COINRADIUS)
             # Super food
             elif c == '1':
                 noCoinsLeft = False
-                coinsLeft += 1
                 pg.draw.circle(SCREEN, GOLD, (int(x * TILE + TILE / 2), int(y * TILE + TILE / 2)), BIGCOINRADIUS)
-    return coinsLeft
+    return noCoinsLeft
 
 # Draw players and ghosts
 def drawEntities(SCREEN, TILE, players, ghosts):
@@ -311,7 +308,7 @@ def play():
             if players[1].lives <= 0 and players[0].lives <= 0:
                 playGame = gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH)
 
-        if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT) < 300:
+        if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
             maze = initBoard()
             players, ghosts = nextLevel(players, ghosts, TILE)
             drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
