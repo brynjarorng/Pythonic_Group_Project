@@ -39,17 +39,18 @@ selectBar = pg.Rect(0, 0, 800, 100)
 # 3 - quit
 menuState = 0
 
+# Find center for text
+miniArcade.center = ((height/2),(width/2) - 250)
+snake.center = ((height/2),(width/2) - 100)
+pong.center = ((height/2),(width/2))
+whackman.center = ((height/2),(width/2) + 100)
+quitGame.center = ((height/2),(width/2) + 200)
+
 while 1:
     gameDisplay = pg.display.set_mode((height,width))
     
     # UI elements
     gameDisplay.fill((0,0,0))
-
-    miniArcade.center = ((height/2),(width/2) - 250)
-    snake.center = ((height/2),(width/2) - 100)
-    pong.center = ((height/2),(width/2))
-    whackman.center = ((height/2),(width/2) + 100)
-    quitGame.center = ((height/2),(width/2) + 200)
 
     # add elements to drawing surface
     gameDisplay.blit(ArcadeSurf, miniArcade)
@@ -58,24 +59,13 @@ while 1:
     gameDisplay.blit(WhackmanSurf, whackman)
     gameDisplay.blit(QuitGameSurf, quitGame)
 
-
     keyinput = pg.key.get_pressed()
     if keyinput[pg.K_ESCAPE]:
         pg.quit()
         quit()
     
-    # hover play snake
-    if menuState == 0:
-        selectBar.center = ((height/2),(width/2) - 100)
-    # hover play pong
-    elif menuState == 1:
-        selectBar.center = ((height/2),(width/2))
-    # hover play whackman
-    elif menuState == 2:
-        selectBar.center = ((height/2),(width/2) + 100)
-    # hover quit
-    elif menuState == 3:
-        selectBar.center = ((height/2),(width/2) + 200)
+    # Move displayed selection
+    selectBar.center = ((height/2),(width/2) + 100 * (menuState - 1))
     pg.gfxdraw.box(gameDisplay, selectBar, (0, 25, 175, 125))
 
     # menu state machine

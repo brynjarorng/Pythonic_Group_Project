@@ -116,58 +116,44 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
         countSTarr.append((countSurf, countText))
     
     FPSCLOCK = pg.time.Clock()
-
-    blink = True
+    spacePressed = False
+    counter = 0
+    blinkSpeed = [int(FPS*(1/2)), FPS]
     while True:
         FPSCLOCK.tick(FPS)
         pg.event.pump()
 
-        # blinking space
-        # on
-        drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-        drawEntities(SCREEN, TILE, players, ghosts)
-        SCREEN.blit(pressSpaceSurf, pressSpaceText)
-        pg.display.flip()
-        if blink:
-            for i in range(FPS * 2):
-                    pg.event.pump()
-                    FPSCLOCK.tick(FPS)
-                    keyinput = pg.key.get_pressed()
-                    if keyinput[pg.K_SPACE]:
-                        blink = False
-                        break
-                    continue
-        
-        # off
-        drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-        drawEntities(SCREEN, TILE, players, ghosts)
-        pg.display.flip()
-        if blink:
-            for i in range(int(FPS * (1 / 3))):
-                    pg.event.pump()
-                    FPSCLOCK.tick(FPS)
-                    keyinput = pg.key.get_pressed()
-                    if keyinput[pg.K_SPACE]:
-                        blink = False
-                        break
-                    continue
-
-        # countdown sequence
         keyinput = pg.key.get_pressed()
-        if keyinput[pg.K_SPACE] or not blink:
-            for x in countSTarr:
-                drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-                wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-                drawEntities(SCREEN, TILE, players, ghosts)
-                SCREEN.blit(x[0], x[1])
-                pg.display.flip()
-                for i in range(int(FPS * (2 / 3))):
+        if keyinput[pg.K_SPACE]:
+            spacePressed = True
+
+        drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+        wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+        drawEntities(SCREEN, TILE, players, ghosts)
+        
+        # countdown sequence
+        if spacePressed:
+            SCREEN.blit(countSTarr[counter][0], countSTarr[counter][1])
+            pg.display.flip()
+            for i in range(int(FPS * (2 / 3))):
+                pg.event.pump()
+                FPSCLOCK.tick(FPS)
+                continue
+            counter += 1
+            if counter == 4:
+                return
+        else:
+            print(blinkSpeed)
+            for i, speed in enumerate(blinkSpeed):
+                for x in range(speed):
+                    if i == 1:
+                        SCREEN.blit(pressSpaceSurf, pressSpaceText)
+                    pg.display.flip()
                     pg.event.pump()
                     FPSCLOCK.tick(FPS)
-                    continue
-            return
+                    keyinput = pg.key.get_pressed()
+                    if keyinput[pg.K_SPACE]:
+                        break
 
 # Respawn when both die
 def respawn(players, ghosts):
@@ -271,6 +257,7 @@ def play():
             if players[1].lives <= 0 and players[0].lives <= 0:
                 playGame = gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH)
 
+        # Check to see if there are any coins left, if not: next level
         if drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT):
             maze = initBoard()
             players, ghosts = nextLevel(players, ghosts, TILE)

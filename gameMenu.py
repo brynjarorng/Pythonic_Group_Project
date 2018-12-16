@@ -20,6 +20,19 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
     # main menu background positioning
     rec = pg.Rect(0, 0, 520, 325)
     rec.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2 - 30)
+    
+    # main menu options text
+    continueTextSurf, continueText = text_objects("CONTINUE", largeText)
+    continueText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
+
+    restartTextSurf, restartText = text_objects("RESTART", largeText)
+    restartText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
+
+    quitTextSurf, quitText = text_objects("EXIT TO MENU", largeText)
+    quitText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
+    
+    # Selection bar
+    selectBar = pg.Rect(0, 0, 520, 70)
 
     # wait here in order to not instantly exit the menu
     pg.time.wait(400)
@@ -32,26 +45,9 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
         # draw main background
         pg.gfxdraw.box(SCREEN, rec, (0, 0, 0, 125))
 
-        # draw the selection bar
-        selectBar = pg.Rect(0, 0, 520, 70)
-        if menuState == 0:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
-        elif menuState == 1:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
-        elif menuState == 2:
-            selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
+        # Move selection bar
+        selectBar.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + (100 * menuState)))
         
-
-        # main menu options text
-        continueTextSurf, continueText = text_objects("CONTINUE", largeText)
-        continueText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3)))
-
-        restartTextSurf, restartText = text_objects("RESTART", largeText)
-        restartText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 100))
-
-        quitTextSurf, quitText = text_objects("EXIT TO MENU", largeText)
-        quitText.center = ((WINDOWWIDTH/2),(WINDOWHEIGHT * (1 / 3) + 200))
-
         # blit text to surface
         SCREEN.blit(continueTextSurf, continueText)
         SCREEN.blit(restartTextSurf, restartText)
@@ -85,9 +81,7 @@ def menu(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, FPS):
                 elif ev.type == pg.KEYDOWN and ev.key == pg.K_ESCAPE:
                     return 1
 
-        
         pg.display.flip()
-
 
 def text_objects(text, font):
     textSurface = font.render(text, True, (255,255,255))
