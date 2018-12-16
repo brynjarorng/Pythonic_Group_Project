@@ -101,6 +101,7 @@ def nextLevel(players, ghosts, tile):
         ghost.speed = ghostSpeed + 2
     return players, ghosts
 
+# Count after space has been pressed
 def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts):    
     largeText = pg.font.Font(str(fontLoc), 200)
     smallText = pg.font.Font(str(fontLoc), 60)
@@ -108,18 +109,12 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
     pressSpaceSurf, pressSpaceText = wm.text_objects('PRESS SPACE TO START', smallText)
     pressSpaceText.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
     
-    count3Surf, count3Text = wm.text_objects('3', largeText)
-    count3Text.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
-
-    count2Surf, count2Text = wm.text_objects('2', largeText)
-    count2Text.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
-
-    count1Surf, count1Text = wm.text_objects('1', largeText)
-    count1Text.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+    countSTarr = []
+    for x in ['3', '2', '1', 'GO!']:
+        countSurf, countText = wm.text_objects(x, largeText)
+        countText.center = (WINDOWWIDTH /2, WINDOWHEIGHT / 2)
+        countSTarr.append((countSurf, countText))
     
-    count0Surf, count0Text = wm.text_objects('GO!', largeText)
-    count0Text.center = (WINDOWWIDTH /2 + 20, WINDOWHEIGHT / 2)
-
     FPSCLOCK = pg.time.Clock()
 
     blink = True
@@ -162,53 +157,16 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
         # countdown sequence
         keyinput = pg.key.get_pressed()
         if keyinput[pg.K_SPACE] or not blink:
-            # 3
-            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
-            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-            drawEntities(SCREEN, TILE, players, ghosts)
-            SCREEN.blit(count3Surf, count3Text)
-            pg.display.flip()
-            for i in range(int(FPS * (2 / 3))):
-                pg.event.pump()
-                FPSCLOCK.tick(FPS)
-                continue
-            
-            # 2
-            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
-            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-            drawEntities(SCREEN, TILE, players, ghosts)
-            SCREEN.blit(count2Surf, count2Text)
-            pg.display.flip()
-            for i in range(int(FPS * (2 / 3))):
-                pg.event.pump()
-                FPSCLOCK.tick(FPS)
-                continue
-            
-            # 1
-            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
-            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-            drawEntities(SCREEN, TILE, players, ghosts)
-            SCREEN.blit(count1Surf, count1Text)
-            pg.display.flip()
-            for i in range(int(FPS * (2 / 3))):
-                pg.event.pump()
-                FPSCLOCK.tick(FPS)
-                continue
-            
-            # GO!
-            #pg.draw.rect(SCREEN, (0,0,0), (0, 0, WINDOWWIDTH, WINDOWHEIGHT))
-            drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
-            wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
-            drawEntities(SCREEN, TILE, players, ghosts)
-            SCREEN.blit(count0Surf, count0Text)
-            pg.display.flip()
-            for i in range(int(FPS / 2)):
-                pg.event.pump()
-                FPSCLOCK.tick(FPS)
-                continue
+            for x in countSTarr:
+                drawBoard(SCREEN, maze, TILE, WINDOWWIDTH, WINDOWHEIGHT)
+                wm.drawScore(SCREEN, WINDOWHEIGHT, WINDOWWIDTH, BOTTOMOFFSET, players)
+                drawEntities(SCREEN, TILE, players, ghosts)
+                SCREEN.blit(x[0], x[1])
+                pg.display.flip()
+                for i in range(int(FPS * (2 / 3))):
+                    pg.event.pump()
+                    FPSCLOCK.tick(FPS)
+                    continue
             return
 
 # Respawn when both die
@@ -237,6 +195,7 @@ def respawn(players, ghosts):
         ghost.moveCount = 0
     return players, ghosts
 
+# Both player are dead and have no lives left
 def gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH):
     smallText = pg.font.Font(str(fontLoc), 53)
 
@@ -270,7 +229,7 @@ def gameOver(players, SCREEN, WINDOWHEIGHT, WINDOWWIDTH):
             return False
         
 
-# Actual game play
+# Actual gameplay
 def play():
     pg.init()
 
