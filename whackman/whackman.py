@@ -147,7 +147,6 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
             if counter == 4:
                 return
         else:
-            print(blinkSpeed)
             for i, speed in enumerate(blinkSpeed):
                 for x in range(speed):
                     if i == 1:

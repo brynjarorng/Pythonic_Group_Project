@@ -170,7 +170,6 @@ def countDownGameStart(SCREEN, score1, score2, ball, paddle1, paddle2):
             if counter == 4:
                 return
         else:
-            print(blinkSpeed)
             for i, speed in enumerate(blinkSpeed):
                 for x in range(speed):
                     if i == 1:
