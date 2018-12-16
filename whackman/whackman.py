@@ -8,7 +8,6 @@ import gameMenu as gm
 import os, sys
 from pathlib import Path
 
-FPS = 100
 
 # Get path of file and use that as the base path
 def initBoard():
@@ -33,7 +32,7 @@ def initEntities():
 
     players = ['P', 'p']
     ghosts = ['A', 'B', 'C', 'D']
-    ghostStart = [(9,12), (19,12), (9, 18), (19,18)]
+    ghostStart = [(9,11), (19,11), (9, 17), (19,17)]
 
     # Initializing entities
     players = [Player(imgArr[4], '1', 'P', (15, 23), (0, 0), 0, 10),
@@ -96,7 +95,7 @@ def nextLevel(players, ghosts, tile):
 # Respawn when both die
 def respawn(players, ghosts):
     playerStart = [(15, 23), (13, 23)] 
-    ghostStart = [(9,12), (19,12), (9, 18), (19,18)]
+    [(9,11), (19,11), (9, 17), (19,17)]
     for i, player in enumerate(players):
         player.pos = playerStart[i]
         player.dead = False
@@ -108,6 +107,7 @@ def respawn(players, ghosts):
         ghost.path = []
         ghost.moveCount = 0
     return players, ghosts
+
 def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTOMOFFSET, players, ghosts):
     basePath = Path(sys.argv[0]).parent
     fontLoc = basePath / "whackman" / "data" / "fonts" / "minotaur.ttf"
@@ -216,6 +216,9 @@ def countDownGameStart(SCREEN, maze, TILE, FPS, WINDOWWIDTH, WINDOWHEIGHT, BOTTO
 def play():
     pg.init()
 
+    # Game speed
+    FPS = 100
+
     # The board and entities    
     maze = initBoard()
 
@@ -238,8 +241,9 @@ def play():
     LEFT = (-1, 0)
     RIGHT = (1, 0)    
     
-    # Used to regulate entity speeds
+    # Used to regulate entity speed
     maxSpeed = 100
+
     playGame = True
 
     while playGame:
