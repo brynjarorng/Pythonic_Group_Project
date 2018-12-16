@@ -11,6 +11,9 @@ Mini arcade is a project running old school games writen in python using pygame.
 * Brynjar Örn Grétarsson - *brynjarog17* - [github](https://github.com/brynjarorng)
 * Daði Steinn Brynjarsson - *dadib17* - [github](https://github.com/dadisteinn)
 
+## prerequisites
+To be able to successfully launch this project you need to have installed **python 3.7.1**, link below. It is also very handy to have [git](https://git-scm.com/) installed to be able to follow the instructions below exactly.
+
 
 ## Built with
 * [VS Code](https://code.visualstudio.com/Download) - Code editor
