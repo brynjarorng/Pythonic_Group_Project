@@ -45,6 +45,16 @@ Now that everything is setup, using the terminal, navigate into *Pythonic_Group_
 or
 * `python ./menu.py`
 
+## How to play
+
+### Snake
+In snake you use the arrow keys to control a green snake. The objective is to eat the red apples that spawn at random places on the map, a new one will spawn as soon as you eat an apple. If the snake collides with either the outer edges of the game or if collides with itself, the game i over.
+
+### Pong
+A two player game where player use the arrow keys and *WASD* to control paddles on either side of the screen. A ball will spawn in the middle and travel to the sides. The objective of the game is to use the paddles to send the ball to the edge of the screen on your opponents side to gain a point. There is no win condition, players can play a single game as long as they like.
+
+### Whackman
+A game based on classical pacman. This version is a two player game where the objective is to collect as many points before the players three lives are over. Use use the arrow keys and *WASD* to travel and avoid the ghosts. There are four ghosts in total, two of which move randomly across the map. The other two ghosts are powered by an A.I. and try to follow the player. The player compete to collect as many coins as they can, when all coins have been collected on a map, the next level will start and the ghosts will speed up. The players have 3 lives and every time a ghost catches a player he will loose one of them. When a player looses a life, but has an extra, he will respawn. But not until the other player dies or the next level starts. When both player die and are out of extra lives, the game is over.
 
 ## Game assets
 
